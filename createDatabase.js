@@ -103,7 +103,7 @@ var makePubs = function(cb) {
 
 //test groups
 var makeGroups = function(cb) {
-  var maxGroups = 10
+  var maxGroups = 1
   for(var i = 0; i < maxGroups; i++) {
     (function() {
       var _i = i;
@@ -122,7 +122,7 @@ var makeGroups = function(cb) {
             console.log( error ) 
           } else { 
             //console.log( body ) 
-            if( _i === maxPubs - 1) {
+            if( _i === maxGroups - 1) {
               console.log( "GROUPS MADE" )
               if(cb) cb()
             }
@@ -263,8 +263,50 @@ var makeDesign = function(cb) {
   })
 }
 
-var testDesign = function(cb) {
-  request( serverAddress + '/_design/gibbertest/_view/groupreadaccessfile?key=["group2","gibbertest/publications/pub1"]', function(e,r,b) {
+var testDesign1 = function(cb) {
+  request( serverAddress + '/_design/gibbertest/_view/groupreadaccessfile?key=["group1","gibbertest/publications/pub1"]', function(e,r,b) {
+    console.log( "TESTING DESIGN:", b )
+    if( cb ) cb()
+  })
+}
+
+var testDesign2 = function(cb) {
+  request( serverAddress + '/_design/gibbertest/_view/usergroupsall?key="user3"', function(e,r,b) {
+    console.log( "TESTING DESIGN:", b )
+    if( cb ) cb()
+  })
+}
+
+var testDesign3 = function(cb) {
+  request( serverAddress + '/_design/gibbertest/_view/userreadaccessfile?key=["user1","gibbertest/publications/pub1"]', function(e,r,b) {
+    console.log( "TESTING DESIGN:", b )
+    if( cb ) cb()
+  })
+}
+
+var testDesign4 = function(cb) {
+  request( serverAddress + '/_design/gibbertest/_view/userreadaccessall?key="user1"', function(e,r,b) {
+    console.log( "TESTING DESIGN:", b )
+    if( cb ) cb()
+  })
+}
+
+var testDesign5 = function(cb) {
+  request( serverAddress + '/_design/gibbertest/_view/userwriteaccessall?key="user1"', function(e,r,b) {
+    console.log( "TESTING DESIGN:", b )
+    if( cb ) cb()
+  })
+}
+
+var testDesign6 = function(cb) {
+  request( serverAddress + '/_design/gibbertest/_view/userwriteaccessfile?key=["user1","gibbertest/publications/pub1"]', function(e,r,b) {
+    console.log( "TESTING DESIGN:", b )
+    if( cb ) cb()
+  })
+}
+
+var testDesign7 = function(cb) {
+  request( serverAddress + '/_design/gibbertest/_view/groupwriteaccessfile?key=["group1","gibbertest/publications/pub1"]', function(e,r,b) {
     console.log( "TESTING DESIGN:", b )
     if( cb ) cb()
   })
@@ -277,8 +319,15 @@ var createDatabaseUsersAndPubs = function() {
         makeDatabase,
         makeUsers,
         makePubs,
+	makeGroups,
         makeDesign,
-        testDesign
+        testDesign1,
+	testDesign2,
+	testDesign3,
+	testDesign4,
+	testDesign5,
+	testDesign6,
+	testDesign7
       ]
       
   cb = function() {
