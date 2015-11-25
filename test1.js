@@ -1,0 +1,34 @@
+var nano = require('nano')('http://admin:admin@localhost:5984');
+nano.db.create('alice');
+var alice = nano.db.use('alice');
+
+function signupuser1()
+{
+	alice.insert({ username: "user1", password: "user1", email: "user1@user1.com", type: "user" }, 'user1', function(err, body) {
+  if (!err)
+    console.log(body);
+});
+}
+
+function uploadfileuser1()
+{
+	alice.insert({ file_id:"file2", body: "blahblah", access: ["user1","user2","user3"], type: "file"}, 'file1', function(err, body) {
+  if (!err)
+    console.log(body);
+});
+}
+
+function User_Create(username,password)
+{
+	var d = new Date();
+	alice.insert({"password":password,  "type": "user", "joinDate": d, "website": "","affiliation": "","email": "","following": [],"friends": []}, 'user1', function(err, body) {
+  if (!err)
+    console.log(body);
+});
+}
+
+User_Create("testuser1","testpwd1");
+
+signupuser1();
+
+uploadfileuser1();

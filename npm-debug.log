@@ -1,0 +1,69 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/usr/bin/node', '/usr/bin/npm', 'install', 'nnao' ]
+2 info using npm@1.4.28
+3 info using node@v0.10.37
+4 verbose node symlink /usr/bin/node
+5 verbose config Skipping project config: /home/stein/.npmrc. (matches userconfig)
+6 warn package.json cradle@0.6.9 No repository field.
+7 verbose cache add [ 'nnao', null ]
+8 verbose cache add name=undefined spec="nnao" args=["nnao",null]
+9 verbose parsed url { protocol: null,
+9 verbose parsed url   slashes: null,
+9 verbose parsed url   auth: null,
+9 verbose parsed url   host: null,
+9 verbose parsed url   port: null,
+9 verbose parsed url   hostname: null,
+9 verbose parsed url   hash: null,
+9 verbose parsed url   search: null,
+9 verbose parsed url   query: null,
+9 verbose parsed url   pathname: 'nnao',
+9 verbose parsed url   path: 'nnao',
+9 verbose parsed url   href: 'nnao' }
+10 silly lockFile 9da10dd0-nnao nnao
+11 verbose lock nnao /home/stein/.npm/9da10dd0-nnao.lock
+12 silly lockFile 9da10dd0-nnao nnao
+13 silly lockFile 9da10dd0-nnao nnao
+14 verbose addNamed [ 'nnao', '' ]
+15 verbose addNamed [ null, '*' ]
+16 silly lockFile ba31853c-nnao nnao@
+17 verbose lock nnao@ /home/stein/.npm/ba31853c-nnao.lock
+18 silly addNameRange { name: 'nnao', range: '*', hasData: false }
+19 verbose request where is /nnao
+20 verbose request registry https://registry.npmjs.org/
+21 verbose request id cbf6b6e146a2fe38
+22 verbose url raw /nnao
+23 verbose url resolving [ 'https://registry.npmjs.org/', './nnao' ]
+24 verbose url resolved https://registry.npmjs.org/nnao
+25 verbose request where is https://registry.npmjs.org/nnao
+26 info trying registry request attempt 1 at 22:56:48
+27 http GET https://registry.npmjs.org/nnao
+28 http 404 https://registry.npmjs.org/nnao
+29 silly registry.get cb [ 404,
+29 silly registry.get   { 'content-type': 'application/json',
+29 silly registry.get     'cache-control': 'max-age=0',
+29 silly registry.get     'content-length': '2',
+29 silly registry.get     'accept-ranges': 'bytes',
+29 silly registry.get     date: 'Tue, 17 Nov 2015 06:56:49 GMT',
+29 silly registry.get     via: '1.1 varnish',
+29 silly registry.get     age: '0',
+29 silly registry.get     connection: 'keep-alive',
+29 silly registry.get     'x-served-by': 'cache-dfw1828-DFW',
+29 silly registry.get     'x-cache': 'MISS',
+29 silly registry.get     'x-cache-hits': '0',
+29 silly registry.get     'x-timer': 'S1447743408.977326,VS0,VE282' } ]
+30 silly lockFile ba31853c-nnao nnao@
+31 silly lockFile ba31853c-nnao nnao@
+32 error 404 Not Found
+32 error 404
+32 error 404 'nnao' is not in the npm registry.
+32 error 404 You should bug the author to publish it
+32 error 404
+32 error 404 Note that you can also install from a
+32 error 404 tarball, folder, or http url, or git url.
+33 error System Linux 3.19.0-25-generic
+34 error command "/usr/bin/node" "/usr/bin/npm" "install" "nnao"
+35 error cwd /home/stein/couchdbgrouptest/couchdbgrouptest
+36 error node -v v0.10.37
+37 error npm -v 1.4.28
+38 error code E404
+39 verbose exit [ 1, true ]
