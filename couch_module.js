@@ -9,6 +9,8 @@ function user_obj()
 	this.changepassword = User_ChangePassword;
 	this.checkreadaccessall = User_CheckReadAccessAll;
 	this.checkwriteaccessall = User_CheckWriteAccessAll;
+	this.checkwriteaccessfile = User_CheckWriteAccessFile;
+	this.checkreadaccessfile = User_CheckReadAccessFile;
 }
 
 function group_obj()
@@ -19,6 +21,8 @@ function group_obj()
 	this.removeuser = Group_RemoveUser;
 	this.checkuser = Group_CheckUser;
 	this.checkowner = Group_CheckOwner;
+	this.checkreadaccessfile = Group_CheckReadAccessFile;
+	this.checkwriteaccessfile = Group_CheckWriteAccessFile;
 }
 
 function file_obj()
@@ -110,35 +114,71 @@ function User_Destroy(username,cb)
 function User_CheckReadAccessAll(username, cb)
 {
 	var response = [];
-	blah.view("gibbertest", 'userreadaccessall', {key:[username]},function(err, body) {
+	blah.view("gibbertest", 'userreadaccessall', {"key":username},function(err, body) {
   if (!err) {
-	console.log(body);
+	//console.log(body);
     body.rows.forEach(function(doc) {
-      console.log(doc.value);
+     // console.log(doc.value);
       response.push(doc.value);
     }
 );
   }
 console.log(err);
-console.log(response);
-//cb(response);
+//console.log(response);
+cb(response);
 });
 }
 
 function User_CheckWriteAccessAll(username, cb)
 {
 	var response = [];
-	blah.view("gibbertest", 'userwriteaccessall', {key:[username]},function(err, body) {
+	blah.view("gibbertest", 'userwriteaccessall', {"key":username},function(err, body) {
   if (!err) {
     body.rows.forEach(function(doc) {
       //console.log(doc.value);
-      console.log(doc);
+    //  console.log(doc);
       response.push(doc.value);
     }
 );
   }
 console.log(err);
-console.log(doc);
+//console.log(doc);
+});
+}
+
+function User_CheckReadAccessFile(username, filename, cb)
+{
+	var response = [];
+	blah.view("gibbertest", 'userreadaccessfile', {"key":[username,filename]},function(err, body) {
+  if (!err) {
+    body.rows.forEach(function(doc) {
+      //console.log(doc.value);
+     // console.log(doc);
+      response.push(doc.value);
+	//console.log(response);
+    }
+);
+  }
+console.log(err);
+cb(response);
+});
+}
+
+function User_CheckWriteAccessFile(username, filename, cb)
+{
+	var response = [];
+	blah.view("gibbertest", 'userwriteaccessfile', {"key":[username,filename]},function(err, body) {
+  if (!err) {
+    body.rows.forEach(function(doc) {
+    //  console.log(doc.value);
+     // console.log(doc);
+      response.push(doc.value);
+	//console.log(response);
+    }
+);
+  }
+console.log(err);
+cb(response);
 });
 }
 
@@ -147,7 +187,12 @@ function File_Publish(username,filename,text,date,cb)
 	blah.insert({type: "publication", "author": username, "readaccess":[username],"writeaccess":[username],"groupreadaccess":[],"groupwriteaccess":[],"publicationDate":date,"text":text}, "gibbertest/publications/"+username+filename, function(err, body) {
   if (!err)
     {	console.log(body);
-	//cb(true);
+	cb(true);
+}
+else
+{
+	console.log(err);
+	cb(err);
 }
 });
 }
@@ -166,7 +211,12 @@ function File_Edit(filename,newtext,cb)
 	blah.insert(newfile, filename, function(err, body) {
   if (!err)
     {	console.log(body);
-	//cb(true);
+	cb(true);
+}
+else
+{
+	console.log(err);
+	cb(err);
 }
 });
     }
@@ -179,7 +229,12 @@ function Group_Create(groupname,owner,cb)
 	blah.insert({"owner": owner,"type": "group","members": [owner]}, groupname, function(err, body) {
   if (!err)
     {	console.log(body);
-	//cb(true);
+	cb(true);
+}
+else
+{
+	console.log(err);
+	cb(err);
 }
 });
 }
@@ -195,7 +250,12 @@ function Group_Destroy(groupname,cb)
 	blah.destroy(groupname, body._rev, function(err, body) {
   if (!err)
     {	console.log(body);
-	//cb(true);
+	cb(true);
+}
+else
+{
+	console.log(err);
+	cb(err);
 }
 });
     }
@@ -219,7 +279,12 @@ function Group_AddUser(groupname,newuser,cb)
 	blah.insert(newgroup, groupname, function(err, body) {
   if (!err)
     {	console.log(body);
-	//cb(true);
+	cb(true);
+}
+else
+{
+	console.log(err);
+	cb(err);
 }
 });
     }
@@ -253,7 +318,12 @@ function Group_RemoveUser(groupname,remuser,cb)
 	blah.insert(newgroup, groupname, function(err, body) {
   if (!err)
     {	console.log(body);
-	//cb(true);
+	cb(true);
+}
+else
+{
+	console.log(err);
+	cb(err);
 }
 });
     }
@@ -279,13 +349,20 @@ function Group_CheckUser(groupname,checkuser,cb)
 				break;
 			}
 		}
+		console.log(found);
+		cb(found);
 	//console.log(newgroup);
-	blah.insert(newgroup, groupname, function(err, body) {
+/*	blah.insert(newgroup, groupname, function(err, body) {
   if (!err)
     {	console.log(found);
-	//cb(found);
+	cb(found);
 }
-});
+else
+{
+	console.log(err);
+	cb(err);
+}
+});*/
     }
 });
 	
@@ -305,20 +382,76 @@ function Group_CheckOwner(groupname,checkowner,cb)
 		{
 			found = true;
 		}
+		cb(found);
 	//console.log(newgroup);
-	blah.insert(newgroup, groupname, function(err, body) {
+	/*blah.insert(newgroup, groupname, function(err, body) {
   if (!err)
     {	console.log(found);
-	//cb(found);
+	cb(found);
 }
-});
+else
+{
+	console.log(err);
+	cb(err);
+}
+});*/
     }
 });
 	
 }
 
+function Group_CheckReadAccessFile(groupname, filename, cb)
+{
+	var response = [];
+	blah.view("gibbertest", 'groupreadaccessfile', {"key":[groupname,filename]},function(err, body) {
+  if (!err) {
+    body.rows.forEach(function(doc) {
+     // console.log(doc.value);
+      //console.log(doc);
+      response.push(doc.value);
+	//console.log(response);
+    }
+);
+  }
+console.log(err);
+cb(response);
+});
+}
 
-//user.create("testuser1","testpwd1");
+function Group_CheckWriteAccessFile(groupname, filename, cb)
+{
+	var response = [];
+	blah.view("gibbertest", 'groupwriteaccessfile', {"key":[groupname,filename]},function(err, body) {
+  if (!err) {
+    body.rows.forEach(function(doc) {
+     // console.log(doc.value);
+      //console.log(doc);
+      response.push(doc.value);
+	//console.log(response);
+    }
+);
+  }
+//console.log(err);
+cb(response);
+});
+}
+
+//REMOVE THESE LATER
+function booleancallback(result)
+{
+	console.log("haha stuff also here is your result: ");
+	console.log(result);
+	return;
+}
+
+function bodycallback(body)
+{
+	console.log("here is your body result");
+	console.log(body);
+	return;
+}
+
+//user.create("testuser1","testpwd1","date",booleancallback);
 //user.destroy("testuser1","1-0019c0210c0d14b818d41161d2edfd31");
 //group.create("testgroup1","testowner1");
 //group.adduser("testgroup1","user2");
@@ -326,13 +459,15 @@ function Group_CheckOwner(groupname,checkowner,cb)
 //group.checkowner("testgroup1","testowner1");
 //group.adduser("testgroup1","user3");
 //group.removeuser("testgroup1","user2");
-//file.publish("testuser1","testfile1","thisismyfiletext","21 May 2015");
+//file.publish("testuser1","testfile1","thisismyfiletext","21 May 2015",booleancallback);
 //file.edit("gibbertest/publications/testuser1testfile1","thisismyNEWtext");
 //file.edit("gibbertest/publications/testuser1testfile1","thisismythirdtext");
 //group.destroy("testgroup1");
 //user.changepassword("testuser1","newpwd");
 //user.checkinfo("testuser1");
-//user.checkreadaccessall("user1");
+//user.checkwriteaccessfile("user1","gibbertest/publications/pub0",bodycallback);
+//user.checkreadaccessall("user1",bodycallback);
+//group.checkwriteaccessfile("group1","gibbertest/publications/pub5",bodycallback);
 
 
 
