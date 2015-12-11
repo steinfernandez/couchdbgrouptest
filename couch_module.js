@@ -46,32 +46,35 @@ module.exports = couch_module;
 
 function User_Create(username,password,date,cb)
 {
+	var result = false;
 	blah.insert({"type": "user","password": password,"joinDate": date,"website": "","affiliation": "","email": "","following": [],"friends": []}, username, function(err, body) {
   if (!err)
     {	console.log(body);
-	cb(true);
+	cb(err,true);
 }
 else
 	{
 	console.log(err);
-	cb(false);
+	cb(err,false);
 	}
 });
 }
 
 function User_CheckInfo(username,cb)
 {
+	var result = false;
 	blah.get(username, { revs_info: true }, function(err, body) {
+ console.log(body);
   if (!err)
-    {	console.log(body);
-	cb(body);
-}
+	result = true;
+  cb(err,result);
 });
 }
 
 
-function User_ChangePassword(username,newpwd)
+function User_ChangePassword(username,newpwd,cb)
 {
+	
 	var newbody = {"type": "user","password": "","joinDate": "","website": "","affiliation": "","email": "","following": [],"friends": []};
 	blah.get(username, { revs_info: true }, function(err, body) {
 	if (!err)
@@ -81,10 +84,11 @@ function User_ChangePassword(username,newpwd)
 		newbody["password"] = newpwd;
 	console.log(newbody);
 	blah.insert(newbody, username, function(err, body) {
+  var result = false;
+  console.log(body);
   if (!err)
-    {	console.log(body);
-	//cb(true);
-}
+	result = true;
+  cb(err,result);
 });
     }
 });
@@ -101,10 +105,10 @@ function User_Destroy(username,cb)
 		
 	console.log(body._rev);
 	blah.destroy(username, body._rev, function(err, body) {
+   console.log(body);
   if (!err)
-    {	console.log(body);
-	//cb(true);
-}
+	result = true;
+  cb(err,result);
 });
     }
 });
@@ -123,9 +127,10 @@ function User_CheckReadAccessAll(username, cb)
     }
 );
   }
-console.log(err);
-//console.log(response);
-cb(response);
+  console.log(body);
+  if (!err)
+	result = true;
+  cb(err,result);
 });
 }
 
@@ -142,7 +147,7 @@ function User_CheckWriteAccessAll(username, cb)
 );
   }
 console.log(err);
-//console.log(doc);
+cb(err,response);
 });
 }
 
@@ -160,7 +165,7 @@ function User_CheckReadAccessFile(username, filename, cb)
 );
   }
 console.log(err);
-cb(response);
+cb(err,response);
 });
 }
 
@@ -178,22 +183,18 @@ function User_CheckWriteAccessFile(username, filename, cb)
 );
   }
 console.log(err);
-cb(response);
+cb(err,response);
 });
 }
 
 function File_Publish(username,filename,text,date,cb)
 {
 	blah.insert({type: "publication", "author": username, "readaccess":[username],"writeaccess":[username],"groupreadaccess":[],"groupwriteaccess":[],"publicationDate":date,"text":text}, "gibbertest/publications/"+username+filename, function(err, body) {
+   var result = false;
+  console.log(body);
   if (!err)
-    {	console.log(body);
-	cb(true);
-}
-else
-{
-	console.log(err);
-	cb(err);
-}
+	result = true;
+  cb(err,result);
 });
 }
 
@@ -209,15 +210,11 @@ function File_Edit(filename,newtext,cb)
 		newfile["text"] = newtext;
 	console.log(newfile);
 	blah.insert(newfile, filename, function(err, body) {
+   var result = false;
+  console.log(body);
   if (!err)
-    {	console.log(body);
-	cb(true);
-}
-else
-{
-	console.log(err);
-	cb(err);
-}
+	result = true;
+  cb(err,result);
 });
     }
 });
@@ -227,38 +224,25 @@ else
 function Group_Create(groupname,owner,cb)
 {
 	blah.insert({"owner": owner,"type": "group","members": [owner]}, groupname, function(err, body) {
+   var result = false;
+  console.log(body);
   if (!err)
-    {	console.log(body);
-	cb(true);
-}
-else
-{
-	console.log(err);
-	cb(err);
-}
+	result = true;
+  cb(err,result);
 });
 }
 
 function Group_Destroy(groupname,cb)
 {
 	blah.get(groupname, { revs_info: true }, function(err, body) {
-	if (!err)
-    {	
-		console.log(body);
-		
-	console.log(body._rev);
 	blah.destroy(groupname, body._rev, function(err, body) {
+   var result = false;
+  console.log(body);
   if (!err)
-    {	console.log(body);
-	cb(true);
-}
-else
-{
-	console.log(err);
-	cb(err);
-}
+	result = true;
+  cb(err,result);
 });
-    }
+    
 });
 	
 }
@@ -277,15 +261,11 @@ function Group_AddUser(groupname,newuser,cb)
 		//newgroup["_rev"] = body["_rev"];
 	console.log(newgroup);
 	blah.insert(newgroup, groupname, function(err, body) {
+  var result = false;
+  console.log(body);
   if (!err)
-    {	console.log(body);
-	cb(true);
-}
-else
-{
-	console.log(err);
-	cb(err);
-}
+	result = true;
+  cb(err,result);
 });
     }
 });
@@ -316,15 +296,11 @@ function Group_RemoveUser(groupname,remuser,cb)
 		}
 	console.log(newgroup);
 	blah.insert(newgroup, groupname, function(err, body) {
+  var result = false;
+  console.log(body);
   if (!err)
-    {	console.log(body);
-	cb(true);
-}
-else
-{
-	console.log(err);
-	cb(err);
-}
+	result = true;
+  cb(err,result);
 });
     }
 });
@@ -350,20 +326,8 @@ function Group_CheckUser(groupname,checkuser,cb)
 			}
 		}
 		console.log(found);
-		cb(found);
-	//console.log(newgroup);
-/*	blah.insert(newgroup, groupname, function(err, body) {
-  if (!err)
-    {	console.log(found);
-	cb(found);
-}
-else
-{
-	console.log(err);
-	cb(err);
-}
-});*/
     }
+	cb(err,found);
 });
 	
 }
@@ -382,20 +346,8 @@ function Group_CheckOwner(groupname,checkowner,cb)
 		{
 			found = true;
 		}
-		cb(found);
-	//console.log(newgroup);
-	/*blah.insert(newgroup, groupname, function(err, body) {
-  if (!err)
-    {	console.log(found);
-	cb(found);
-}
-else
-{
-	console.log(err);
-	cb(err);
-}
-});*/
     }
+	cb(err,found);
 });
 	
 }
@@ -414,7 +366,7 @@ function Group_CheckReadAccessFile(groupname, filename, cb)
 );
   }
 console.log(err);
-cb(response);
+cb(err,response);
 });
 }
 
@@ -432,7 +384,7 @@ function Group_CheckWriteAccessFile(groupname, filename, cb)
 );
   }
 //console.log(err);
-cb(response);
+cb(err,response);
 });
 }
 

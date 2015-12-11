@@ -1,16 +1,17 @@
-var couch_module = require("./couch_module.js");
+var couch_module = require("../couch_module.js");
 var assert = require('assert');
+var mocha_steps = require('mocha-steps');
 var stepnum = 0;
 
-function booleancallback(result)
+function done(result)
 {
 	console.log("haha stuff also here is your result: ");
 	console.log(result);
-	if(result == true)
+/*	if(result == true)
 	{
 		stepnum++;
 		functions[stepnum];
-	}
+	}*/
 	return;
 }
 
@@ -38,11 +39,37 @@ var testusercheckinfo = couch_module.user.checkinfo("testuser1",bodycallback);
 functions[0];
 */
 
+function mochacallback(err,response)
+{
+	return response;
+}
+
+
+
 describe('User', function() {
-  describe('#save()', function() {
-    it('should save without error', function(done) {
-      var user = new User('Luna');
-      user.save(done);
+  describe('#userbasicfns()', function() {
+    it('should create user without error', function(done) {
+      couch_module.user.create("testuser1","testpwd1", "11-21-2015", done)
+    });
+    it('should checkinfo without error', function(done) {
+      couch_module.user.checkinfo("testuser1", done)
+    });
+    it('should change user pass without error', function(done) {
+      couch_module.user.changepassword("testuser1", "newpwd", done)
+    });
+  });
+});
+
+describe('Group', function() {
+  describe('#groupbasicfns()', function() {
+    it('should create group without error', function(done) {
+      couch_module.group.create("testgroup1","testowner1",done)
+    });
+    it('should adduser without error', function(done) {
+      couch_module.group.adduser("testgroup1","user2",done)
+    });
+    it('should checkuser without error', function(done) {
+      couch_module.group.checkuser("testgroup1","user3",done)
     });
   });
 });

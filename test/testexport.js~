@@ -1,16 +1,17 @@
-var couch_module = require("./couch_module.js");
-
+var couch_module = require("../couch_module.js");
+var assert = require('assert');
+var mocha_steps = require('mocha-steps');
 var stepnum = 0;
 
-function booleancallback(result)
+function done(result)
 {
 	console.log("haha stuff also here is your result: ");
 	console.log(result);
-	if(result == true)
+/*	if(result == true)
 	{
 		stepnum++;
 		functions[stepnum];
-	}
+	}*/
 	return;
 }
 
@@ -20,7 +21,7 @@ function bodycallback(body)
 	console.log(body);
 	return;
 }
-
+/*
 var testusercreate = couch_module.user.create("testuser1","testpwd1", "11-21-2015", booleancallback);
 var testusercheckinfo = couch_module.user.checkinfo("testuser1",bodycallback);
 
@@ -36,11 +37,25 @@ var testusercheckinfo = couch_module.user.checkinfo("testuser1",bodycallback);
       ]
 
 functions[0];
+*/
 
 
-//
-//
-//
 
-//
-//
+describe('User', function() {
+  describe('#create()', function() {
+    it('should create without error', function(done) {
+      couch_module.user.create("testuser1","testpwd1", "11-21-2015", done)
+    });
+    it('should checkinfo without error', function(done) {
+      couch_module.user.checkinfo("testuser1", done)
+    });
+    it('should pass without error', function(done) {
+      couch_module.user.changepassword("testuser1", "newpwd", done)
+    });
+  });
+
+ describe('#checkinfo()', function() {
+   
+  });
+});
+
