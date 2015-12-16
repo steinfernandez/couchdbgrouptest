@@ -1,4 +1,4 @@
-var queuehandler = require("./queuehandler2.js");
+var queuehandler = require("./queuehandler.js");
 
 function cb(err, response)
 {

@@ -1,4 +1,4 @@
-var queuehandler2 = require("./queuehandler2.js");
+var queuehandler = require("./queuehandler2.js");
 
 function cb(err, response)
 {
@@ -6,6 +6,6 @@ function cb(err, response)
 }
 
 
-queuehandler2.user.create("testuser1","testpwd1", "11-21-2015",cb);
+queuehandler.user.create("testuser1","testpwd1", "11-21-2015",cb);
 
-queuehandler2.user.create("testuser2","testpwd1", "11-21-2015",cb);
+queuehandler.user.create("testuser2","testpwd1", "11-21-2015",cb);
