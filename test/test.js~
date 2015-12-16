@@ -3,15 +3,16 @@ var assert = require('assert');
 var mocha_steps = require('mocha-steps');
 var stepnum = 0;
 
+/*
 function done(result)
 {
 	console.log("haha stuff also here is your result: ");
 	console.log(result);
-/*	if(result == true)
+	if(result == true)
 	{
 		stepnum++;
 		functions[stepnum];
-	}*/
+	}
 	return;
 }
 
@@ -21,7 +22,7 @@ function bodycallback(body)
 	console.log(body);
 	return;
 }
-/*
+
 var testusercreate = couch_module.user.create("testuser1","testpwd1", "11-21-2015", booleancallback);
 var testusercheckinfo = couch_module.user.checkinfo("testuser1",bodycallback);
 
@@ -38,10 +39,14 @@ var testusercheckinfo = couch_module.user.checkinfo("testuser1",bodycallback);
 
 functions[0];
 */
+var CR1 = true;
 
-function mochacallback(err,response)
-{
-	return response;
+
+
+function callbackfn(err,response)
+{	
+	if((!err)&&(this[0] == response))
+		this[1]();
 }
 
 
@@ -49,7 +54,7 @@ function mochacallback(err,response)
 describe('User', function() {
   describe('#userbasicfns()', function() {
     it('should create user without error', function(done) {
-      couch_module.user.create("testuser1","testpwd1", "11-21-2015", done)
+      couch_module.user.create("testuser1","testpwd1", "11-21-2015", callbackfn.bind([CR1,done]))
     });
     it('should checkinfo without error', function(done) {
       couch_module.user.checkinfo("testuser1", done)
