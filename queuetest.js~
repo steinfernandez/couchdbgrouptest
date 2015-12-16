@@ -1,0 +1,11 @@
+var queuehandler2 = require("./queuehandler2.js");
+
+function cb(err, response)
+{
+	console.log(response);
+}
+
+
+queuehandler2.user.create("testuser1","testpwd1", "11-21-2015",cb);
+
+queuehandler2.user.create("testuser2","testpwd1", "11-21-2015",cb);

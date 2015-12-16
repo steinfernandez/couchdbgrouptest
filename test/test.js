@@ -1,7 +1,5 @@
 var couch_module = require("../couch_module.js");
 var assert = require('assert');
-var mocha_steps = require('mocha-steps');
-var stepnum = 0;
 
 /*
 function done(result)
