@@ -3,9 +3,9 @@ var assert = require('assert');
  
 var q = queue();
 
-//q.timeout = 3000; 
+q.timeout = 4000; 
 q.concurrency = 1;
-//q.timeout = 1000;
+
 
 var testString = ''
 
@@ -14,7 +14,8 @@ q.push(( cb ) => {
 })
 
 q.push(( cb ) => {
-  console.log("testString: "+testString) 
+  console.log("testString: "+testString);
+  cb(); 
 })
 
 q.push(( cb ) => {
@@ -22,7 +23,8 @@ q.push(( cb ) => {
 })
 
 q.push(( cb ) => {
-  console.log("testString: "+testString) 
+  console.log("testString: "+testString);
+  cb(); 
 })
 
 
@@ -32,11 +34,13 @@ q.push(( cb ) => {
 
 
 q.push(( cb ) => {
-  console.log("testString: "+testString) 
+  console.log("testString: "+testString);
+  cb();
 })
 
 q.push(( cb ) => {
-  assert( testString === '123' ) 
+  assert( testString === '123' ) ;
+  cb();
 })
 
 
