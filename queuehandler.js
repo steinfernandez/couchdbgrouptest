@@ -48,8 +48,9 @@ module.exports = queuehandler;
 var isempty = true;
 
 q.concurrency = 1;
-q.timeout = 2000;
- 
+q.timeout = 1000; 
+
+
 q.on('timeout', function(next, job) {
   console.log('job timed out:', job.toString().replace(/\n/g, ''));
   next();
@@ -66,10 +67,19 @@ function ensurequeue()
 	}
 }
 
+function createCallback(err,response,cb,queuecb)
+{
+	return function(){
+	cb(err,response);
+	queuecb();
+	}
+}
+
+
 function User_Create(username,password,date,cb)
 {
-	q.push(couch_module.user.create(username,password,date,cb));
-
+	q.push(function(queuecb){couch_module.user.create(username,password,date,(err,response) => {cb(err,response); queuecb();})});
+	ensurequeue();
 }
 
 function User_Destroy(username,cb)
