@@ -84,103 +84,103 @@ function User_Create(username,password,date,cb)
 
 function User_Destroy(username,cb)
 {
-	q.push(couch_module.user.destroy(username,cb));
+	q.push(function(queuecb){couch_module.user.destroy(username,(err,response) => {cb(err,response); queuecb();})});
 	ensurequeue();
 }
 
 function User_CheckInfo(username,cb)
 {
-	q.push(couch_module.user.checkinfo(username,cb));
+	q.push(function(queuecb){couch_module.user.checkinfo(username,(err,response) => {cb(err,response); queuecb();})});
 	ensurequeue();
 }
 
 function User_ChangePassword(username,newpwd,cb)
 {
-	q.push(couch_module.user.create(username,newpwd,cb));
+	q.push(function(queuecb){couch_module.user.create(username,newpwd,(err,response) => {cb(err,response); queuecb();})});
 	ensurequeue();
 }
 
 function User_CheckReadAccessAll(username,cb)
 {
-	q.push(couch_module.user.checkreadaccessall(username,cb));
+	q.push(function(queuecb){couch_module.user.checkreadaccessall(username,(err,response) => {cb(err,response); queuecb();})});
 	ensurequeue();
 }
 
 function User_CheckWriteAccessAll(username,cb)
 {
-	q.push(couch_module.user.checkwriteaccessall(username,cb));
+	q.push(function(queuecb){couch_module.user.checkwriteaccessall(username,(err,response) => {cb(err,response); queuecb();})});
 	ensurequeue();
 }
 
 function User_CheckReadAccessFile(username,filename,cb)
 {
-	q.push(couch_module.user.checkreadaccessfile(username,filename,cb));
+	q.push(function(queuecb){couch_module.user.checkreadaccessfile(username,filename,(err,response) => {cb(err,response); queuecb();})});
 	ensurequeue();
 }
 
 function User_CheckWriteAccessFile(username,filename,cb)
 {
-	q.push(couch_module.user.checkwriteaccessfile(username,filename,cb));
+	q.push(function(queuecb){couch_module.user.checkwriteaccessfile(username,filename,(err,response) => {cb(err,response); queuecb();})});
 	ensurequeue();
 }
 
 function File_Publish(username,filename,text,date,cb)
 {
-	q.push(couch_module.file.publish(username,filename,text,date,cb));
+	q.push(function(queuecb){couch_module.file.publish(username,filename,text,date,(err,response) => {cb(err,response); queuecb();})});
 	ensurequeue();
 }
 
 function File_Edit(filename,newtext,cb)
 {
-	q.push(couch_module.file.edit(filename,newtext,cb));
+	q.push(function(queuecb){couch_module.file.edit(filename,newtext,(err,response) => {cb(err,response); queuecb();})});
 	ensurequeue();
 }
 
 function Group_Create(groupname,owner,cb)
 {
-	q.push(couch_module.group.create(groupname,owner,cb));
+	q.push(function(queuecb){couch_module.group.create(groupname,owner,(err,response) => {cb(err,response); queuecb();})});
 	ensurequeue();
 }
 
 function Group_Destroy(groupname,cb)
 {
-	q.push(couch_module.group.destroy(groupname,cb));
+	q.push(function(queuecb){couch_module.group.destroy(groupname,(err,response) => {cb(err,response); queuecb();})});
 	ensurequeue();
 }
 
 function Group_AddUser(groupname,newuser,cb)
 {
-	q.push(couch_module.group.adduser(groupname,newuser,cb));
+	q.push(function(queuecb){couch_module.group.adduser(groupname,newuser,(err,response) => {cb(err,response); queuecb();})});
 	ensurequeue();
 }
 
 function Group_RemoveUser(groupname,remuser,cb)
 {
-	q.push(couch_module.group.removeuser(groupname,remuser,cb));
+	q.push(function(queuecb){couch_module.group.removeuser(groupname,remuser,(err,response) => {cb(err,response); queuecb();})});
 	ensurequeue();
 }
 
 function Group_CheckUser(groupname,checkuser,cb)
 {
-	q.push(couch_module.group.checkuser(groupname,checkuser,cb));
+	q.push(function(queuecb){couch_module.group.checkuser(groupname,checkuser,(err,response) => {cb(err,response); queuecb();})});
 	ensurequeue();
 }
 
 function Group_CheckOwner(groupname,checkowner,cb)
 {
-	q.push(couch_module.group.checkowner(groupname,checkowner,cb));
+	q.push(function(queuecb){couch_module.group.checkowner(groupname,checkowner,(err,response) => {cb(err,response); queuecb();})});
 	ensurequeue();
 }
 
 function Group_CheckReadAccessFile(groupname, filename, cb)
 {
-	q.push(couch_module.group.checkreadaccessfile(groupname, filename, cb));
+	q.push(function(queuecb){couch_module.group.checkreadaccessfile(groupname, filename, (err,response) => {cb(err,response); queuecb();})});
 	ensurequeue();
 }
 
 function Group_CheckWriteAccessFile(groupname, filename, cb)
 {
-	q.push(couch_module.group.checkwriteaccessfile(groupname, filename, cb));
+	q.push(function(queuecb){couch_module.group.checkwriteaccessfile(groupname, filename, (err,response) => {cb(err,response); queuecb();})});
 	ensurequeue();
 }
 
