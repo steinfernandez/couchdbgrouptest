@@ -37,8 +37,14 @@ var testusercheckinfo = couch_module.user.checkinfo("testuser1",bodycallback);
 
 functions[0];
 */
-var CR1 = true;
 
+var CR_true = true;
+var CR_createuser = true;
+var CR_checkinfo = true;
+var CR_changepassword = true;
+var CR_userdestroy = true;
+
+var CR_creategroup = true;
 
 
 function callbackfn(err,response)
@@ -49,30 +55,36 @@ function callbackfn(err,response)
 
 
 
-describe('User', function() {
+describe('Basic User Functions', function() {
   describe('#userbasicfns()', function() {
     it('should create user without error', function(done) {
-      couch_module.user.create("testuser1","testpwd1", "11-21-2015", callbackfn.bind([CR1,done]))
+      couch_module.user.create("testuser1","testpwd1", "11-21-2015", callbackfn.bind([CR_true,done]))
     });
     it('should checkinfo without error', function(done) {
-      couch_module.user.checkinfo("testuser1", done)
+      couch_module.user.checkinfo("testuser1", callbackfn.bind([CR_true,done]))
     });
     it('should change user pass without error', function(done) {
-      couch_module.user.changepassword("testuser1", "newpwd", done)
+      couch_module.user.changepassword("testuser1", "newpwd", callbackfn.bind([CR_true,done]))
+    });
+    it('should delete without error', function(done) {
+      couch_module.user.destroy("testuser1", callbackfn.bind([CR_true,done]))
     });
   });
 });
 
-describe('Group', function() {
+describe('Basic Group Functions', function() {
   describe('#groupbasicfns()', function() {
     it('should create group without error', function(done) {
-      couch_module.group.create("testgroup1","testowner1",done)
+      couch_module.group.create("testgroup1","testowner1",callbackfn.bind([CR_true,done]))
     });
     it('should adduser without error', function(done) {
-      couch_module.group.adduser("testgroup1","user2",done)
+      couch_module.group.adduser("testgroup1","user2",callbackfn.bind([CR_true,done]))
     });
     it('should checkuser without error', function(done) {
-      couch_module.group.checkuser("testgroup1","user3",done)
+      couch_module.group.checkuser("testgroup1","user2",callbackfn.bind([CR_true,done]))
+    });
+    it('should checkowner without error', function(done) {
+      couch_module.group.checkowner("testgroup1","testowner1",callbackfn.bind([CR_true,done]))
     });
   });
 });
