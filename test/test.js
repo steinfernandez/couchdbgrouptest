@@ -86,6 +86,23 @@ describe('Basic Group Functions', function() {
     it('should checkowner without error', function(done) {
       couch_module.group.checkowner("testgroup1","testowner1",callbackfn.bind([CR_true,done]))
     });
+    it('should removeuser without error', function(done) {
+      couch_module.group.removeuser("testgroup1","user2",callbackfn.bind([CR_true,done]))
+    });
+    it('should deletegroup without error', function(done) {
+      couch_module.group.destroy("testgroup1",callbackfn.bind([CR_true,done]))
+    });
+  });
+});
+
+describe('Basic File Functions', function() {
+  describe('#filebasicfns()', function() {
+    it('should create file without error', function(done) {
+      couch_module.file.publish("user1","testfile1","this is a test gibber doc","1-1-2016",callbackfn.bind([CR_true,done]))
+    });
+    it('should edit file without error', function(done) {
+      couch_module.file.edit("gibbertest/publications/user1testfile1","this is an edited test gibber doc",callbackfn.bind([CR_true,done]))
+    });
   });
 });
 
