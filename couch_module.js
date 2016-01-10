@@ -160,7 +160,9 @@ function User_CheckReadAccessFile(username, filename, cb)
       //console.log(doc.value);
      // console.log(doc);
       response.push(doc.value);
-	//console.log(response);
+	//console.log("CHECKREADACCESSALL"+response);
+	//console.log("this is my response[0].text");
+	//console.log(response[0].text);
     }
 );
   }

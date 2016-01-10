@@ -39,18 +39,20 @@ functions[0];
 */
 
 var CR_true = true;
-var CR_createuser = true;
-var CR_checkinfo = true;
-var CR_changepassword = true;
-var CR_userdestroy = true;
-
-var CR_creategroup = true;
+var CR_filecheck_basic1 = "this is a test gibber doc";
+var CR_filecheck_basic2 = "this is an edited test gibber doc";
 
 
 function callbackfn(err,response)
 {	
 	if((!err)&&(this[0] == response))
 		this[1]();
+	else 
+	{
+		console.log("this is response"+response[0].text);
+		if((!err)&&(this[0] == response[0].text))
+			this[1]();
+	}
 }
 
 
@@ -100,9 +102,17 @@ describe('Basic File Functions', function() {
     it('should create file without error', function(done) {
       couch_module.file.publish("user1","testfile1","this is a test gibber doc","1-1-2016",callbackfn.bind([CR_true,done]))
     });
+    it('checking file contents', function(done) {
+      couch_module.user.checkreadaccessfile("user1","gibbertest/publications/user1testfile1",callbackfn.bind([CR_filecheck_basic1,done]))
+    });
     it('should edit file without error', function(done) {
       couch_module.file.edit("gibbertest/publications/user1testfile1","this is an edited test gibber doc",callbackfn.bind([CR_true,done]))
     });
+    it('checking file contents', function(done) {
+      couch_module.user.checkreadaccessfile("user1","gibbertest/publications/user1testfile1",callbackfn.bind([CR_filecheck_basic2,done]))
+    });
   });
 });
+
+
 

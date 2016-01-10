@@ -114,6 +114,7 @@ function User_CheckWriteAccessAll(username,cb)
 
 function User_CheckReadAccessFile(username,filename,cb)
 {
+	console.log("usercheckreadaccessfile being pushed");
 	q.push(function(queuecb){couch_module.user.checkreadaccessfile(username,filename,(err,response) => {cb(err,response); queuecb();})});
 	ensurequeue();
 }

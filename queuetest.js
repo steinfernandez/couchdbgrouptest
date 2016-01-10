@@ -6,6 +6,6 @@ function cb(err, response)
 }
 
 
-queuehandler.user.create("testuser1","testpwd1", "11-21-2015",cb);
+//queuehandler.user.create("testuser1","testpwd1", "11-21-2015",cb);
 
-queuehandler.user.create("testuser2","testpwd1", "11-21-2015",cb);
+queuehandler.user.checkreadaccessfile("user1","gibbertest/publications/pub1",cb);
