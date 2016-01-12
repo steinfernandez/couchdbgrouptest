@@ -130,7 +130,7 @@ function User_CheckReadAccessAll(username, cb)
   console.log(body);
   if (!err)
 	result = true;
-  cb(err,result);
+  cb(err,response);
 });
 }
 

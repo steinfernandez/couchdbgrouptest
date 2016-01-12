@@ -41,6 +41,19 @@ functions[0];
 var CR_true = true;
 var CR_filecheck_basic1 = "this is a test gibber doc";
 var CR_filecheck_basic2 = "this is an edited test gibber doc";
+var CR_designdoc_1 =  { _id: 'gibbertest/publications/user1testfile1',
+  _rev: '1-549dab7f9f22a3d735e400d5248c1ace',
+  type: 'publication',
+  author: 'user1',
+  readaccess: [ 'user1' ],
+  writeaccess: [ 'user1' ],
+  groupreadaccess: [],
+  groupwriteaccess: [],
+  publicationDate: '1-1-2016',
+  text: 'this is a test gibber doc',
+  _revs_info: 
+   [ { rev: '1-549dab7f9f22a3d735e400d5248c1ace',
+       status: 'available' } ] };
 
 
 function callbackfn(err,response)
@@ -71,6 +84,9 @@ describe('Basic User Functions', function() {
     it('should delete without error', function(done) {
       couch_module.user.destroy("testuser1", callbackfn.bind([CR_true,done]))
     });
+    it('should create user without error', function(done) {
+      couch_module.user.create("testuser1","testpwd1", "11-21-2015", callbackfn.bind([CR_true,done]))
+    });
   });
 });
 
@@ -100,16 +116,36 @@ describe('Basic Group Functions', function() {
 describe('Basic File Functions', function() {
   describe('#filebasicfns()', function() {
     it('should create file without error', function(done) {
-      couch_module.file.publish("user1","testfile1","this is a test gibber doc","1-1-2016",callbackfn.bind([CR_true,done]))
+      couch_module.file.publish("testuser1","testfile1","this is a test gibber doc","1-1-2016",callbackfn.bind([CR_true,done]))
     });
     it('checking file contents', function(done) {
-      couch_module.user.checkreadaccessfile("user1","gibbertest/publications/user1testfile1",callbackfn.bind([CR_filecheck_basic1,done]))
+      couch_module.user.checkreadaccessfile("testuser1","gibbertest/publications/testuser1testfile1",callbackfn.bind([CR_filecheck_basic1,done]))
     });
     it('should edit file without error', function(done) {
-      couch_module.file.edit("gibbertest/publications/user1testfile1","this is an edited test gibber doc",callbackfn.bind([CR_true,done]))
+      couch_module.file.edit("gibbertest/publications/testuser1testfile1","this is an edited test gibber doc",callbackfn.bind([CR_true,done]))
     });
     it('checking file contents', function(done) {
-      couch_module.user.checkreadaccessfile("user1","gibbertest/publications/user1testfile1",callbackfn.bind([CR_filecheck_basic2,done]))
+      couch_module.user.checkreadaccessfile("testuser1","gibbertest/publications/testuser1testfile1",callbackfn.bind([CR_filecheck_basic2,done]))
+    });
+  });
+});
+
+describe('Design Doc Functions', function() {
+  describe('#filebasicfns()', function() {
+    it('user_checkreadaccessall', function(done) {
+      couch_module.user.checkreadaccessall("testuser1",callbackfn.bind([CR_filecheck_basic2,done]))
+    });
+    it('user_checkwriteaccessall', function(done) {
+      couch_module.user.checkwriteaccessall("testuser1",callbackfn.bind([CR_filecheck_basic2,done]))
+    });
+    it('user_checkreadaccessfile', function(done) {
+      couch_module.user.checkreadaccessall("testuser1",callbackfn.bind([CR_filecheck_basic2,done]))
+    });
+    it('user_checkwriteaccessfile', function(done) {
+      couch_module.user.checkwriteaccessall("testuser1",callbackfn.bind([CR_filecheck_basic2,done]))
+    });
+    it('user_checkwriteaccessfile', function(done) {
+      couch_module.user.checkwriteaccessall("testuser1",callbackfn.bind([CR_filecheck_basic2,done]))
     });
   });
 });
