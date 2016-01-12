@@ -31,6 +31,10 @@ function file_obj()
 {
 	this.publish = File_Publish;
 	this.edit = File_Edit;
+	this.addreadaccess = File_AddReadAccess;
+	this.addwriteaccess = File_AddWriteAccess;
+	this.addgroupreadaccess = File_AddGroupReadAccess;
+	this.addgroupwriteaccess = File_AddGroupWriteAccess;
 }
 
 var user = new user_obj();
@@ -134,6 +138,30 @@ function File_Publish(username,filename,text,date,cb)
 function File_Edit(filename,newtext,cb)
 {
 	q.push(function(queuecb){couch_module.file.edit(filename,newtext,(err,response) => {cb(err,response); queuecb();})});
+	ensurequeue();
+}
+
+function File_AddReadAccess(filename,newuser,cb)
+{
+	q.push(function(queuecb){couch_module.file.addreadaccess(filename,newuser,(err,response) => {cb(err,response); queuecb();})});
+	ensurequeue();
+}
+
+function File_AddWriteAccess(filename,newuser,cb)
+{
+	q.push(function(queuecb){couch_module.file.addwriteaccess(filename,newuser,(err,response) => {cb(err,response); queuecb();})});
+	ensurequeue();
+}
+
+function File_AddGroupReadAccess(filename,newgroup,cb)
+{
+	q.push(function(queuecb){couch_module.file.addgroupreadaccess(filename,newgroup,(err,response) => {cb(err,response); queuecb();})});
+	ensurequeue();
+}
+
+function File_AddGroupWriteAccess(filename,newgroup,cb)
+{
+	q.push(function(queuecb){couch_module.file.addgroupwriteaccess(filename,newgroup,(err,response) => {cb(err,response); queuecb();})});
 	ensurequeue();
 }
 

@@ -21,7 +21,7 @@ function uploadfileuser1()
 function User_Create(username,password)
 {
 	var d = new Date();
-	blah.insert({"password":password,  "type": "user", "joinDate": d, "website": "","affiliation": "","email": "","following": [],"friends": []}, 'user1', function(err, body) {
+	alice.insert({"password":password,  "type": "user", "joinDate": d, "website": "","affiliation": "","email": "","following": [],"friends": []}, 'user1', function(err, body) {
   if (!err)
     console.log(body);
 });

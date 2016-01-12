@@ -29,6 +29,10 @@ function file_obj()
 {
 	this.publish = File_Publish;
 	this.edit = File_Edit;
+	this.addreadaccess = File_AddReadAccess;
+	this.addwriteaccess = File_AddWriteAccess;
+	this.addgroupreadaccess = File_AddGroupReadAccess;
+	this.addgroupwriteaccess = File_AddGroupWriteAccess;
 }
 
 var user = new user_obj();
@@ -222,6 +226,99 @@ function File_Edit(filename,newtext,cb)
 });
 	
 }
+
+function File_AddReadAccess(filename,newuser,cb)
+{
+	var newfile = {type: "publication", "author": "", "readaccess":"","writeaccess":"","groupreadaccess":[],"groupwriteaccess":[],"publicationDate":"","text":""};
+	blah.get(filename, { revs_info: true }, function(err, body) {
+	console.log(err);
+	if (!err)
+    {	
+		console.log(body);
+		newfile = body;
+		newfile["readaccess"].push(newuser);
+	console.log(newfile);
+	blah.insert(newfile, filename, function(err, body) {
+   var result = false;
+  console.log(body);
+  if (!err)
+	result = true;
+  cb(err,result);
+});
+    }
+});
+	
+}
+
+function File_AddWriteAccess(filename,newuser,cb)
+{
+	var newfile = {type: "publication", "author": "", "readaccess":"","writeaccess":"","groupreadaccess":[],"groupwriteaccess":[],"publicationDate":"","text":""};
+	blah.get(filename, { revs_info: true }, function(err, body) {
+	console.log(err);
+	if (!err)
+    {	
+		console.log(body);
+		newfile = body;
+		newfile["writeaccess"].push(newuser);
+	console.log(newfile);
+	blah.insert(newfile, filename, function(err, body) {
+   var result = false;
+  console.log(body);
+  if (!err)
+	result = true;
+  cb(err,result);
+});
+    }
+});
+	
+}
+
+function File_AddGroupReadAccess(filename,newgroup,cb)
+{
+	var newfile = {type: "publication", "author": "", "readaccess":"","writeaccess":"","groupreadaccess":[],"groupwriteaccess":[],"publicationDate":"","text":""};
+	blah.get(filename, { revs_info: true }, function(err, body) {
+	console.log(err);
+	if (!err)
+    {	
+		console.log(body);
+		newfile = body;
+		newfile["groupreadaccess"].push(newgroup);
+	console.log(newfile);
+	blah.insert(newfile, filename, function(err, body) {
+   var result = false;
+  console.log(body);
+  if (!err)
+	result = true;
+  cb(err,result);
+});
+    }
+});
+	
+}
+
+function File_AddGroupWriteAccess(filename,newgroup,cb)
+{
+	var newfile = {type: "publication", "author": "", "readaccess":"","writeaccess":"","groupreadaccess":[],"groupwriteaccess":[],"publicationDate":"","text":""};
+	blah.get(filename, { revs_info: true }, function(err, body) {
+	console.log(err);
+	if (!err)
+    {	
+		console.log(body);
+		newfile = body;
+		newfile["groupwriteaccess"].push(newgroup);
+	console.log(newfile);
+	blah.insert(newfile, filename, function(err, body) {
+   var result = false;
+  console.log(body);
+  if (!err)
+	result = true;
+  cb(err,result);
+});
+    }
+});
+	
+}
+
 
 function Group_Create(groupname,owner,cb)
 {
