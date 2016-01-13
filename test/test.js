@@ -135,8 +135,8 @@ describe('Basic File Functions', function() {
   });
 });
 
-describe('User Design Doc Functions', function() {
-  describe('#userddbasicfns()', function() {
+describe('Access Rights', function() {
+  describe('#accessrights()', function() {
     it('user_checkreadaccessall', function(done) {
       couch_module.user.checkreadaccessall("testuser1",callbackfn.bind([CR_filecheck_basic2,done,FC_text]))
     });
@@ -144,14 +144,36 @@ describe('User Design Doc Functions', function() {
       couch_module.user.checkwriteaccessall("testuser1",callbackfn.bind([CR_filecheck_basic2,done,FC_text]))
     });
     it('user_checkreadaccessfile', function(done) {
-      couch_module.user.checkreadaccessall("testuser1",callbackfn.bind([CR_filecheck_basic2,done,FC_text]))
+      couch_module.user.checkreadaccessfile("testuser1","gibbertest/publications/testuser1testfile1",callbackfn.bind([CR_filecheck_basic2,done,FC_text]))
     });
     it('user_checkwriteaccessfile', function(done) {
-      couch_module.user.checkwriteaccessall("testuser1",callbackfn.bind([CR_filecheck_basic2,done,FC_text]))
+      couch_module.user.checkwriteaccessfile("testuser1","gibbertest/publications/testuser1testfile1",callbackfn.bind([CR_filecheck_basic2,done,FC_text]))
+    });
+    it('file_addreadaccess', function(done) {
+      couch_module.file.addreadaccess("gibbertest/publications/testuser1testfile1","magicuser",callbackfn.bind([CR_true,done,FC_truecheck]))
+    });
+    it('user_checkreadaccessfile', function(done) {
+      couch_module.user.checkreadaccessfile("magicuser","gibbertest/publications/testuser1testfile1",callbackfn.bind([CR_filecheck_basic2,done,FC_text]))
+    });
+    it('file_addwriteaccess', function(done) {
+      couch_module.file.addwriteaccess("gibbertest/publications/testuser1testfile1","magicuser",callbackfn.bind([CR_true,done,FC_truecheck]))
     });
     it('user_checkwriteaccessfile', function(done) {
-      couch_module.user.checkwriteaccessall("testuser1",callbackfn.bind([CR_filecheck_basic2,done,FC_text]))
+      couch_module.user.checkwriteaccessfile("magicuser","gibbertest/publications/testuser1testfile1",callbackfn.bind([CR_filecheck_basic2,done,FC_text]))
+    });
+    it('file_addgroupreadaccess', function(done) {
+      couch_module.file.addgroupreadaccess("gibbertest/publications/testuser1testfile1","fateburn",callbackfn.bind([CR_true,done,FC_truecheck]))
+    });
+    it('group_checkreadaccessfile', function(done) {
+      couch_module.group.checkreadaccessfile("fateburn","gibbertest/publications/testuser1testfile1",callbackfn.bind([CR_filecheck_basic2,done,FC_text]))
+    });
+    it('file_addgroupwriteaccess', function(done) {
+      couch_module.file.addgroupwriteaccess("gibbertest/publications/testuser1testfile1","fateburn",callbackfn.bind([CR_true,done,FC_truecheck]))
+    });
+    it('group_checkwriteaccessfile', function(done) {
+      couch_module.group.checkwriteaccessfile("fateburn","gibbertest/publications/testuser1testfile1",callbackfn.bind([CR_filecheck_basic2,done,FC_text]))
     });
   });
 });
+
 
