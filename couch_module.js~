@@ -30,6 +30,9 @@ function file_obj()
 	this.publish = File_Publish;
 	this.edit = File_Edit;
 	this.addreadaccess = File_AddReadAccess;
+	this.addwriteaccess = File_AddWriteAccess;
+	this.addgroupreadaccess = File_AddGroupReadAccess;
+	this.addgroupwriteaccess = File_AddGroupWriteAccess;
 }
 
 var user = new user_obj();
