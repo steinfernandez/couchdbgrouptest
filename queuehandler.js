@@ -32,9 +32,13 @@ function file_obj()
 	this.publish = File_Publish;
 	this.edit = File_Edit;
 	this.addreadaccess = File_AddReadAccess;
+	this.remreadaccess = File_RemReadAccess;
 	this.addwriteaccess = File_AddWriteAccess;
+	this.remwriteaccess = File_RemWriteAccess;
 	this.addgroupreadaccess = File_AddGroupReadAccess;
+	this.remgroupreadaccess = File_RemGroupReadAccess;
 	this.addgroupwriteaccess = File_AddGroupWriteAccess;
+	this.remgroupwriteaccess = File_RemGroupWriteAccess;
 }
 
 var user = new user_obj();
@@ -147,9 +151,21 @@ function File_AddReadAccess(filename,newuser,cb)
 	ensurequeue();
 }
 
+function File_RemReadAccess(filename,remuser,cb)
+{
+	q.push(function(queuecb){couch_module.file.remreadaccess(filename,remuser,(err,response) => {cb(err,response); queuecb();})});
+	ensurequeue();
+}
+
 function File_AddWriteAccess(filename,newuser,cb)
 {
 	q.push(function(queuecb){couch_module.file.addwriteaccess(filename,newuser,(err,response) => {cb(err,response); queuecb();})});
+	ensurequeue();
+}
+
+function File_RemWriteAccess(filename,remuser,cb)
+{
+	q.push(function(queuecb){couch_module.file.remwriteaccess(filename,remuser,(err,response) => {cb(err,response); queuecb();})});
 	ensurequeue();
 }
 
@@ -159,9 +175,21 @@ function File_AddGroupReadAccess(filename,newgroup,cb)
 	ensurequeue();
 }
 
+function File_RemGroupReadAccess(filename,remgroup,cb)
+{
+	q.push(function(queuecb){couch_module.file.remgroupreadaccess(filename,remgroup,(err,response) => {cb(err,response); queuecb();})});
+	ensurequeue();
+}
+
 function File_AddGroupWriteAccess(filename,newgroup,cb)
 {
 	q.push(function(queuecb){couch_module.file.addgroupwriteaccess(filename,newgroup,(err,response) => {cb(err,response); queuecb();})});
+	ensurequeue();
+}
+
+function File_RemGroupWriteAccess(filename,remgroup,cb)
+{
+	q.push(function(queuecb){couch_module.file.remgroupwriteaccess(filename,remgroup,(err,response) => {cb(err,response); queuecb();})});
 	ensurequeue();
 }
 

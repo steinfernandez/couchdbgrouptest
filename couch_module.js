@@ -30,9 +30,13 @@ function file_obj()
 	this.publish = File_Publish;
 	this.edit = File_Edit;
 	this.addreadaccess = File_AddReadAccess;
+	this.remreadaccess = File_RemReadAccess;
 	this.addwriteaccess = File_AddWriteAccess;
+	this.remwriteaccess = File_RemWriteAccess;
 	this.addgroupreadaccess = File_AddGroupReadAccess;
+	this.remgroupreadaccess = File_RemGroupReadAccess;
 	this.addgroupwriteaccess = File_AddGroupWriteAccess;
+	this.remgroupwriteaccess = File_RemGroupWriteAccess;
 }
 
 var user = new user_obj();
@@ -236,7 +240,33 @@ function File_AddReadAccess(filename,newuser,cb)
     {	
 		console.log(body);
 		newfile = body;
-		newfile["readaccess"].push(newuser);
+		if (newfile["readaccess"].indexOf(newuser) == -1)
+			newfile["readaccess"].push(newuser);
+	console.log(newfile);
+	blah.insert(newfile, filename, function(err, body) {
+   var result = false;
+  console.log(body);
+  if (!err)
+	result = true;
+  cb(err,result);
+});
+    }
+});
+	
+}
+
+function File_RemReadAccess(filename,remuser,cb)
+{
+	var newfile = {type: "publication", "author": "", "readaccess":"","writeaccess":"","groupreadaccess":[],"groupwriteaccess":[],"publicationDate":"","text":""};
+	blah.get(filename, { revs_info: true }, function(err, body) {
+	console.log(err);
+	if (!err)
+    {	
+		console.log(body);
+		newfile = body;
+		var i = newfile["readaccess"].indexOf(remuser);
+		if(i != -1) 
+			newfile["readaccess"].splice(i, 1);
 	console.log(newfile);
 	blah.insert(newfile, filename, function(err, body) {
    var result = false;
@@ -259,7 +289,8 @@ function File_AddWriteAccess(filename,newuser,cb)
     {	
 		console.log(body);
 		newfile = body;
-		newfile["writeaccess"].push(newuser);
+		if (newfile["writeaccess"].indexOf(newuser) == -1)
+			newfile["writeaccess"].push(newuser);
 	console.log(newfile);
 	blah.insert(newfile, filename, function(err, body) {
    var result = false;
@@ -271,6 +302,31 @@ function File_AddWriteAccess(filename,newuser,cb)
     }
 });
 	
+}
+
+function File_RemWriteAccess(filename,remuser,cb)
+{
+	var newfile = {type: "publication", "author": "", "readaccess":"","writeaccess":"","groupreadaccess":[],"groupwriteaccess":[],"publicationDate":"","text":""};
+	blah.get(filename, { revs_info: true }, function(err, body) {
+	console.log(err);
+	if (!err)
+    {	
+		console.log(body);
+		newfile = body;
+		var i = newfile["writeaccess"].indexOf(remuser);
+		if(i != -1) 
+			newfile["writeaccess"].splice(i, 1);
+	console.log(newfile);
+	blah.insert(newfile, filename, function(err, body) {
+   var result = false;
+  console.log(body);
+  if (!err)
+	result = true;
+  cb(err,result);
+});
+    }
+});
+
 }
 
 function File_AddGroupReadAccess(filename,newgroup,cb)
@@ -282,7 +338,8 @@ function File_AddGroupReadAccess(filename,newgroup,cb)
     {	
 		console.log(body);
 		newfile = body;
-		newfile["groupreadaccess"].push(newgroup);
+		if (newfile["groupreadaccess"].indexOf(newgroup) == -1)
+			newfile["groupreadaccess"].push(newgroup);
 	console.log(newfile);
 	blah.insert(newfile, filename, function(err, body) {
    var result = false;
@@ -294,6 +351,31 @@ function File_AddGroupReadAccess(filename,newgroup,cb)
     }
 });
 	
+}
+
+function File_RemGroupReadAccess(filename,remgroup,cb)
+{
+	var newfile = {type: "publication", "author": "", "readaccess":"","writeaccess":"","groupreadaccess":[],"groupwriteaccess":[],"publicationDate":"","text":""};
+	blah.get(filename, { revs_info: true }, function(err, body) {
+	console.log(err);
+	if (!err)
+    {	
+		console.log(body);
+		newfile = body;
+		var i = newfile["groupreadaccess"].indexOf(remgroup);
+		if(i != -1) 
+			newfile["groupreadaccess"].splice(i, 1);
+	console.log(newfile);
+	blah.insert(newfile, filename, function(err, body) {
+   var result = false;
+  console.log(body);
+  if (!err)
+	result = true;
+  cb(err,result);
+});
+    }
+});
+
 }
 
 function File_AddGroupWriteAccess(filename,newgroup,cb)
@@ -305,7 +387,8 @@ function File_AddGroupWriteAccess(filename,newgroup,cb)
     {	
 		console.log(body);
 		newfile = body;
-		newfile["groupwriteaccess"].push(newgroup);
+		if (newfile["groupwriteaccess"].indexOf(newgroup) == -1)
+			newfile["groupwriteaccess"].push(newgroup);
 	console.log(newfile);
 	blah.insert(newfile, filename, function(err, body) {
    var result = false;
@@ -319,6 +402,30 @@ function File_AddGroupWriteAccess(filename,newgroup,cb)
 	
 }
 
+function File_RemGroupWriteAccess(filename,remgroup,cb)
+{
+	var newfile = {type: "publication", "author": "", "readaccess":"","writeaccess":"","groupreadaccess":[],"groupwriteaccess":[],"publicationDate":"","text":""};
+	blah.get(filename, { revs_info: true }, function(err, body) {
+	console.log(err);
+	if (!err)
+    {	
+		console.log(body);
+		newfile = body;
+		var i = newfile["groupwriteaccess"].indexOf(remgroup);
+		if(i != -1) 
+			newfile["groupwriteaccess"].splice(i, 1);
+	console.log(newfile);
+	blah.insert(newfile, filename, function(err, body) {
+   var result = false;
+  console.log(body);
+  if (!err)
+	result = true;
+  cb(err,result);
+});
+    }
+});
+
+}
 
 function Group_Create(groupname,owner,cb)
 {
@@ -486,39 +593,4 @@ function Group_CheckWriteAccessFile(groupname, filename, cb)
 cb(err,response);
 });
 }
-
-//REMOVE THESE LATER
-function booleancallback(result)
-{
-	console.log("haha stuff also here is your result: ");
-	console.log(result);
-	return;
-}
-
-function bodycallback(body)
-{
-	console.log("here is your body result");
-	console.log(body);
-	return;
-}
-
-//user.create("testuser1","testpwd1","date",booleancallback);
-//user.destroy("testuser1","1-0019c0210c0d14b818d41161d2edfd31");
-//group.create("testgroup1","testowner1");
-//group.adduser("testgroup1","user2");
-//group.checkuser("testgroup1","user3");
-//group.checkowner("testgroup1","testowner1");
-//group.adduser("testgroup1","user3");
-//group.removeuser("testgroup1","user2");
-//file.publish("testuser1","testfile1","thisismyfiletext","21 May 2015",booleancallback);
-//file.edit("gibbertest/publications/testuser1testfile1","thisismyNEWtext");
-//file.edit("gibbertest/publications/testuser1testfile1","thisismythirdtext");
-//group.destroy("testgroup1");
-//user.changepassword("testuser1","newpwd");
-//user.checkinfo("testuser1");
-//user.checkwriteaccessfile("user1","gibbertest/publications/pub0",bodycallback);
-//user.checkreadaccessall("user1",bodycallback);
-//group.checkwriteaccessfile("group1","gibbertest/publications/pub5",bodycallback);
-
-
 
