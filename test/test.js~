@@ -40,43 +40,38 @@ functions[0];
 
 var FC_truecheck = "truecheck";
 var FC_emptycheck = "emptycheck";
+var FC_errcheck = "errcheck";
 var FC_text = "text";
 var CR_empty = [];
 var CR_true = true;
 var CR_filecheck_basic1 = "this is a test gibber doc";
 var CR_filecheck_basic2 = "this is an edited test gibber doc";
-var CR_designdoc_1 =  { _id: 'gibbertest/publications/user1testfile1',
-  _rev: '1-549dab7f9f22a3d735e400d5248c1ace',
-  type: 'publication',
-  author: 'user1',
-  readaccess: [ 'user1' ],
-  writeaccess: [ 'user1' ],
-  groupreadaccess: [],
-  groupwriteaccess: [],
-  publicationDate: '1-1-2016',
-  text: 'this is a test gibber doc',
-  _revs_info: 
-   [ { rev: '1-549dab7f9f22a3d735e400d5248c1ace',
-       status: 'available' } ] };
-
 
 function callbackfn(err,response)
 {	
-	if(this[2] == "truecheck")
+	if(this[2] == FC_truecheck)
 	{
-	console.log("thisisresponse\n");
-	console.log(response);
-	console.log(this[0]);
 	if((!err)&&(this[0] == response))
 		this[1]();
 	}
-	else if(this[2] == "emptycheck")
+	else if(this[2] == FC_emptycheck)
 	{
-		console.log("thisisresponse");
-		console.log(response.length);
-		console.log(CR_empty);
+		//console.log("thisisresponse");
+		//console.log(response.length);
+		//console.log(CR_empty);
 		if((!err)&&(0 == response.length))
 		this[1]();
+	}
+	else if(this[2] == FC_errcheck)
+	{
+		console.log("this is errcheck response");
+		console.log(response);
+		console.log(err);
+		if(response == false)
+		{
+			this[1]();
+			console.log("failed successfully");
+		}
 	}
 	else 
 	{
@@ -93,15 +88,27 @@ describe('Basic User Functions', function() {
     it('should create user without error', function(done) {
       couch_module.user.create("testuser1","testpwd1", "11-21-2015", callbackfn.bind([CR_true,done,FC_truecheck]))
     });
+    it('should fail to create user', function(done) {
+      couch_module.user.create("testuser1","testpwd1", "11-21-2015", callbackfn.bind([CR_true,done,FC_errcheck]))
+    });
     it('should checkinfo without error', function(done) {
       couch_module.user.checkinfo("testuser1", callbackfn.bind([CR_true,done,FC_truecheck]))
+    });
+    it('should checkinfo with error', function(done) {
+      couch_module.user.checkinfo("Verchielle, Angel of Affection and Nobility", callbackfn.bind([CR_true,done,FC_errcheck]))
     });
     it('should change user pass without error', function(done) {
       couch_module.user.changepassword("testuser1", "newpwd", callbackfn.bind([CR_true,done,FC_truecheck]))
     });
+/*    it('should change user pass with error', function(done) {
+      couch_module.user.changepassword("Abdielle, Angel of Loyalty", "newpwd", callbackfn.bind([CR_true,done,FC_errcheck]))
+    });*/
     it('should delete without error', function(done) {
       couch_module.user.destroy("testuser1", callbackfn.bind([CR_true,done,FC_truecheck]))
     });
+/*    it('should delete with error', function(done) {
+      couch_module.user.destroy("Lelielle, the Jaws of God", callbackfn.bind([CR_true,done,FC_errcheck]))
+    });*/
     it('should create user without error', function(done) {
       couch_module.user.create("testuser1","testpwd1", "11-21-2015", callbackfn.bind([CR_true,done,FC_truecheck]))
     });
@@ -204,7 +211,7 @@ describe('Access Rights', function() {
     it('group_checkwriteaccessfile', function(done) {
       couch_module.group.checkwriteaccessfile("fateburn","gibbertest/publications/testuser1testfile1",callbackfn.bind([CR_filecheck_basic2,done,FC_text]))
     });
-    it('file_remgroupreadaccess', function(done) {
+    it('file_remgroupwriteaccess', function(done) {
       couch_module.file.remgroupwriteaccess("gibbertest/publications/testuser1testfile1","fateburn",callbackfn.bind([CR_true,done,FC_truecheck]))
     });
     it('group_checkwriteaccessfile', function(done) {
