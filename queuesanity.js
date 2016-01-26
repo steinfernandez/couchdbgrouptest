@@ -1,10 +1,13 @@
+/* This is a test to ensure that the queue executes synchronously i.e. waits for each task to complete before executing the next.*/
+
+
 var queue = require('queue');
 var assert = require('assert');
  
 var q = queue();
 
 q.timeout = 4000; 
-q.concurrency = 1;
+q.concurrency = 1;	/* This is necessary for synchronous execution. Default behaviour is asynchronous.*/
 
 
 var testString = ''
