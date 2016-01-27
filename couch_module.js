@@ -105,7 +105,7 @@ function User_ChangePassword(username,newpwd,cb)
     {	
 		//console.log(body);
 		newbody = body;
-		newbody["password"] = newpwd;
+		newbody.password = newpwd;
 	//console.log(newbody);
 	blah.insert(newbody, username, function(err2, body) {
   //console.log(body);
@@ -131,13 +131,11 @@ function User_Destroy(username,cb)
 	blah.get(username, { revs_info: true }, function(err1, body) {
 	if (!err1)
    	{	
-		console.log(body);
-		//console.log(body._rev);
 		blah.destroy(username, body._rev, function(err2, body) {
   if (!err2)
   {
 	result = true;
-	cb(err2,result)
+	cb(err2,result);
   }
 });
     }
@@ -155,14 +153,11 @@ function User_CheckReadAccessAll(username, cb)
 	var response = [];
 	blah.view("gibbertest", 'userreadaccessall', {"key":username},function(err, body) {
   if (!err) {
-	//console.log(body);
     body.rows.forEach(function(doc) {
-     // console.log(doc.value);
       response.push(doc.value);
     }
 );
   }
-  //console.log(body);
   if (!err)
 	result = true;
   cb(err,response);
@@ -180,8 +175,6 @@ function User_CheckWriteAccessAll(username, cb)
 	blah.view("gibbertest", 'userwriteaccessall', {"key":username},function(err, body) {
   if (!err) {
     body.rows.forEach(function(doc) {
-      //console.log(doc.value);
-    //  console.log(doc);
       response.push(doc.value);
     }
 );
@@ -203,16 +196,10 @@ function User_CheckReadAccessFile(username, filename, cb)
 	blah.view("gibbertest", 'userreadaccessfile', {"key":[username,filename]},function(err, body) {
   if (!err) {
     body.rows.forEach(function(doc) {
-      //console.log(doc.value);
-     // console.log(doc);
       response.push(doc.value);
-	//console.log("CHECKREADACCESSALL"+response);
-	//console.log("this is my response[0].text");
-	//console.log(response[0].text);
     }
 );
   }
-//console.log(err);
 cb(err,response);
 });
 }
@@ -229,14 +216,10 @@ function User_CheckWriteAccessFile(username, filename, cb)
 	blah.view("gibbertest", 'userwriteaccessfile', {"key":[username,filename]},function(err, body) {
   if (!err) {
     body.rows.forEach(function(doc) {
-    //  console.log(doc.value);
-     // console.log(doc);
       response.push(doc.value);
-	//console.log(response);
     }
 );
   }
-//console.log(err);
 cb(err,response);
 });
 }
@@ -253,7 +236,6 @@ function File_Publish(username,filename,text,date,cb)
 {
 	blah.insert({type: "publication", "author": username, "readaccess":[username],"writeaccess":[username],"groupreadaccess":[],"groupwriteaccess":[],"publicationDate":date,"text":text}, "gibbertest/publications/"+username+filename, function(err, body) {
    var result = false;
-  //console.log(body);
   if (!err)
 	result = true;
   cb(err,result);
@@ -274,7 +256,7 @@ function File_Edit(filename,newtext,cb)
 	if (!err1)
    	{	
 		newfile = body;
-		newfile["text"] = newtext;
+		newfile.text = newtext;
 		blah.insert(newfile, filename, function(err2, body) {
   if (!err2)
   {
@@ -301,8 +283,8 @@ function File_AddReadAccess(filename,newuser,cb)
 	if (!err1)
     	{	
 		newfile = body;
-		if (newfile["readaccess"].indexOf(newuser) == -1)
-			newfile["readaccess"].push(newuser);
+		if (newfile.readaccess.indexOf(newuser) == -1)
+			newfile.readaccess.push(newuser);
 	blah.insert(newfile, filename, function(err2, body) {
   if (!err2)
   {
@@ -329,9 +311,9 @@ function File_RemReadAccess(filename,remuser,cb)
 	if (!err1)
 	{	
 		newfile = body;
-		var i = newfile["readaccess"].indexOf(remuser);
+		var i = newfile.readaccess.indexOf(remuser);
 		if(i != -1) 
-			newfile["readaccess"].splice(i, 1);
+			newfile.readaccess.splice(i, 1);
 	blah.insert(newfile, filename, function(err2, body) {
   if (!err2)
   {
@@ -358,8 +340,8 @@ function File_AddWriteAccess(filename,newuser,cb)
 	if (!err1)
 	{	
 		newfile = body;
-		if (newfile["writeaccess"].indexOf(newuser) == -1)
-			newfile["writeaccess"].push(newuser);
+		if (newfile.writeaccess.indexOf(newuser) == -1)
+			newfile.writeaccess.push(newuser);
 	blah.insert(newfile, filename, function(err2, body) {
   if (!err2)
 {
@@ -387,9 +369,9 @@ function File_RemWriteAccess(filename,remuser,cb)
     	{	
 
 		newfile = body;
-		var i = newfile["writeaccess"].indexOf(remuser);
+		var i = newfile.writeaccess.indexOf(remuser);
 		if(i != -1) 
-			newfile["writeaccess"].splice(i, 1);
+			newfile.writeaccess.splice(i, 1);
 	blah.insert(newfile, filename, function(err2, body) {
   if (!err2)
   {
@@ -416,8 +398,8 @@ function File_AddGroupReadAccess(filename,newgroup,cb)
 	if (!err1)
    	{	
 		newfile = body;
-		if (newfile["groupreadaccess"].indexOf(newgroup) == -1)
-			newfile["groupreadaccess"].push(newgroup);
+		if (newfile.groupreadaccess.indexOf(newgroup) == -1)
+			newfile.groupreadaccess.push(newgroup);
 	blah.insert(newfile, filename, function(err2, body) {
   if (!err2)
   {
@@ -444,9 +426,9 @@ function File_RemGroupReadAccess(filename,remgroup,cb)
 	if (!err1)
   	{	
 		newfile = body;
-		var i = newfile["groupreadaccess"].indexOf(remgroup);
+		var i = newfile.groupreadaccess.indexOf(remgroup);
 		if(i != -1) 
-			newfile["groupreadaccess"].splice(i, 1);
+			newfile.groupreadaccess.splice(i, 1);
 	blah.insert(newfile, filename, function(err2, body) {
   if (!err2)
   {
@@ -474,8 +456,8 @@ function File_AddGroupWriteAccess(filename,newgroup,cb)
 	if (!err1)
 	{	
 		newfile = body;
-		if (newfile["groupwriteaccess"].indexOf(newgroup) == -1)
-			newfile["groupwriteaccess"].push(newgroup);
+		if (newfile.groupwriteaccess.indexOf(newgroup) == -1)
+			newfile.groupwriteaccess.push(newgroup);
 	blah.insert(newfile, filename, function(err2, body) {
   if (!err2)
   {
@@ -502,9 +484,9 @@ function File_RemGroupWriteAccess(filename,remgroup,cb)
 	if (!err1)
     {	
 		newfile = body;
-		var i = newfile["groupwriteaccess"].indexOf(remgroup);
+		var i = newfile.groupwriteaccess.indexOf(remgroup);
 		if(i != -1) 
-			newfile["groupwriteaccess"].splice(i, 1);
+			newfile.groupwriteaccess.splice(i, 1);
 	blah.insert(newfile, filename, function(err2, body) {
 
   if (!err2)
@@ -565,15 +547,10 @@ function Group_AddUser(groupname,newuser,cb)
 {
 	var newfile = {"owner": "","type": "group","members": []};
 	blah.get(groupname, { revs_info: true }, function(err, body) {
-	//console.log(err);
 	if (!err)
     {	
-		//console.log(body["members"]);
-		//console.log(body._rev);
 		newgroup = body;
-		newgroup["members"].push(newuser);
-		//newgroup["_rev"] = body["_rev"];
-	//console.log(newgroup);
+		newgroup.members.push(newuser);
 	blah.insert(newgroup, groupname, function(err, body) {
   var result = false;
   //console.log(body);
@@ -597,14 +574,12 @@ function Group_RemoveUser(groupname,remuser,cb)
 	var newfile = {"owner": "","type": "group","members": []};
 	var index = -1;
 	blah.get(groupname, function(err, body) {
-	//console.log(err);
 	if (!err)
     {	
-		//console.log(body);
 		newgroup = body;
-		for(i=0;i<newgroup["members"].length;i++)
+		for(i=0;i<newgroup.members.length;i++)
 		{
-			if(newgroup["members"][i] == remuser)
+			if(newgroup.members[i] == remuser)
 			{
 				index = i;
 				break;
@@ -612,12 +587,10 @@ function Group_RemoveUser(groupname,remuser,cb)
 		}
 		if (index > -1) 
 		{
-			newgroup["members"].splice(index, 1);
+			newgroup.members.splice(index, 1);
 		}
-	//console.log(newgroup);
 	blah.insert(newgroup, groupname, function(err, body) {
   var result = false;
-  //console.log(body);
   if (!err)
 	result = true;
   cb(err,result);
@@ -638,20 +611,17 @@ function Group_CheckUser(groupname,checkuser,cb)
 	var newfile = {"owner": "","type": "group","members": []};
 	var found = false;
 	blah.get(groupname, function(err, body) {
-	//console.log(err);
 	if (!err)
     {	
-		//console.log(body);
 		newgroup = body;
-		for(i=0;i<newgroup["members"].length;i++)
+		for(i=0;i<newgroup.members.length;i++)
 		{
-			if(newgroup["members"][i] == checkuser)
+			if(newgroup.members[i] == checkuser)
 			{
 				found = true;
 				break;
 			}
 		}
-		//console.log(found);
     }
 	cb(err,found);
 });
@@ -669,12 +639,10 @@ function Group_CheckOwner(groupname,checkowner,cb)
 	var newfile = {"owner": "","type": "group","members": []};
 	var found = false;
 	blah.get(groupname, function(err, body) {
-	//console.log(err);
 	if (!err)
     {	
-		//console.log(body);
 		newgroup = body;
-		if(newgroup["owner"] == checkowner)
+		if(newgroup.owner == checkowner)
 		{
 			found = true;
 		}
@@ -696,14 +664,10 @@ function Group_CheckReadAccessFile(groupname, filename, cb)
 	blah.view("gibbertest", 'groupreadaccessfile', {"key":[groupname,filename]},function(err, body) {
   if (!err) {
     body.rows.forEach(function(doc) {
-     // console.log(doc.value);
-      //console.log(doc);
       response.push(doc.value);
-	//console.log(response);
     }
 );
   }
-//console.log(err);
 cb(err,response);
 });
 }
@@ -720,14 +684,10 @@ function Group_CheckWriteAccessFile(groupname, filename, cb)
 	blah.view("gibbertest", 'groupwriteaccessfile', {"key":[groupname,filename]},function(err, body) {
   if (!err) {
     body.rows.forEach(function(doc) {
-     // console.log(doc.value);
-      //console.log(doc);
       response.push(doc.value);
-	//console.log(response);
     }
 );
   }
-//console.log(err);
 cb(err,response);
 });
 }
