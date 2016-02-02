@@ -1,0 +1,27 @@
+{
+  "name": "couchdbgrouptest",
+  "version": "1.0.0",
+  "description": "Testing implementation of granular sharing and groups in couchDB",
+  "main": "queuehandler.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "node createDatabase.js && cd test && mocha test -b"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/steinfernandez/couchdbgrouptest"
+  },
+  "author": "stein",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/steinfernandez/couchdbgrouptest/issues"
+  },
+  "homepage": "https://github.com/steinfernandez/couchdbgrouptest",
+  "dependencies": {
+    "queue": "^3.1.0",
+    "nano" : "^6.2.0",
+    "request":"^2.69.0"
+  }
+}
