@@ -1,9 +1,9 @@
 /* jshint node: true, couch: true, esversion: 6 */
-/*eslint no-undef: 2*/
+/*eslint no-undef: 0, no-unused-vars: 0*/
 
 
 var couch_module = require("./couch_module.js");
-var queue = require('queue');
+var queue = require("queue");
  
 var q = queue();
 
@@ -63,10 +63,11 @@ q.concurrency = 1;
 q.timeout = 1000; 
 
 
-q.on('timeout', function(next, job) {
-  console.log('job timed out:', job.toString().replace(/\n/g, ''));
-  next();
-});
+q.on("timeout", function(next, job)
+		{
+			console.log("job timed out:", job.toString().replace(/\n/g, ""));
+			next();
+		});
 
 /*
  * This function is called automatically after pushing each task into the queue to ensure it is running.  
@@ -76,9 +77,7 @@ function ensurequeue()
 	if(isempty)
 	{
 		isempty = !isempty;
-		q.start(function(err) {
-		  //console.log('all done:');
-		});
+		q.start(function(err) {/*console.log('all done:');*/});
 	}
 }
 
