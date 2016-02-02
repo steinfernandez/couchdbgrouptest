@@ -1,4 +1,6 @@
-/* jshint esversion: 6 */
+/* jshint node: true, couch: true, esversion: 6 */
+/*eslint no-undef: 2*/
+
 
 var couch_module = require("./couch_module.js");
 var queue = require('queue');
@@ -66,7 +68,7 @@ q.on('timeout', function(next, job) {
   next();
 });
 
-/**
+/*
  * This function is called automatically after pushing each task into the queue to ensure it is running.  
  */
 function ensurequeue()
@@ -80,17 +82,11 @@ function ensurequeue()
 	}
 }
 
-
-function createCallback(err,response,cb,queuecb)
-{
-	return function(){
-	cb(err,response);
-	queuecb();
-	};
-}
+/* These functions act as a wrapper for the tasks defined in couch_module.js by pushing them into the queue and starting it with ensurequeue() */
 
 /**
  * Creates a new user.
+ * Response format: true if successful, false if failed.
  * @param {string} username - The name of the user to be created.
  * @param {string} password - The password of the user to be created.
  * @param {string} date - The current date.
@@ -104,6 +100,7 @@ function User_Create(username,password,date,cb)
 
 /**
  * Deletes a specified user.
+ * Response format: true if successful, false if failed.
  * @param {string} username - The name of the user to be deleted.
  * @param {function} cb - The callback function in the form of cb(err,response).
  */
@@ -115,6 +112,7 @@ function User_Destroy(username,cb)
 
 /**
  * Retrieves info for a specified user.
+ * Response format: User info document. 
  * @param {string} username - The name of the user whose info is to be retrieved.
  * @param {function} cb - The callback function in the form of cb(err,response).
  */
@@ -126,6 +124,7 @@ function User_CheckInfo(username,cb)
 
 /**
  * Changes password for a specified user.
+ * Response format: true if successful, false if failed.
  * @param {string} username - The name of the user whose password is to be changed.
  * @param {string} newpwd - The new password.
  * @param {function} cb - The callback function in the form of cb(err,response).
@@ -137,7 +136,8 @@ function User_ChangePassword(username,newpwd,cb)
 }
 
 /**
- * Return all files that a specified user can read
+ * Return all files that a specified user can read.
+ * Response format: Associative array of files.
  * @param {string} username - The name of the user whose readable files are to be retrieved.
  * @param {function} cb - The callback function in the form of cb(err,response).
  */
@@ -148,7 +148,8 @@ function User_CheckReadAccessAll(username,cb)
 }
 
 /**
- * Return all files that a specified user can write
+ * Return all files that a specified user can write.
+ * Response format: Associative array of files.
  * @param {string} username - The name of the user whose writable files are to be retrieved.
  * @param {function} cb - The callback function in the form of cb(err,response).
  */
@@ -159,7 +160,8 @@ function User_CheckWriteAccessAll(username,cb)
 }
 
 /**
- * Return a specific file if the specified user can read it
+ * Return a specific file if the specified user can read it.
+ * Response format: Associative array of files.
  * @param {string} username - The name of the user attempting to read the file.
  * @param {string} filename - The name of the file to be retrieved.
  * @param {function} cb - The callback function in the form of cb(err,response).
@@ -171,7 +173,8 @@ function User_CheckReadAccessFile(username,filename,cb)
 }
 
 /**
- * Return a specific file if the specified user can write to it
+ * Return a specific file if the specified user can write to it.
+ * Response format: Associative array of files.
  * @param {string} username - The name of the user attempting to write to the file.
  * @param {string} filename - The name of the file to be retrieved.
  * @param {function} cb - The callback function in the form of cb(err,response).
@@ -183,7 +186,8 @@ function User_CheckWriteAccessFile(username,filename,cb)
 }
 
 /**
- * Creates a new file
+ * Creates a new file. 
+ * Response format: true if successful, false if failed.
  * @param {string} username - The name of the user creating the file
  * @param {string} filename - The name of the file to be created.
  * @param {string} text - The contents of the file.
@@ -197,7 +201,8 @@ function File_Publish(username,filename,text,date,cb)
 }
 
 /**
- * Edits an existing file
+ * Edits an existing file. 
+ * Response format: true if successful, false if failed.
  * @param {string} filename - The name of the file to be edited.
  * @param {string} newtext - The new contents of the file.
  * @param {function} cb - The callback function in the form of cb(err,response).
@@ -209,7 +214,8 @@ function File_Edit(filename,newtext,cb)
 }
 
 /**
- * Grants a user read access permissions for the specified file
+ * Grants a user read access permissions for the specified file. 
+ * Response format: true if successful, false if failed.
  * @param {string} filename - The name of the relevant file.
  * @param {string} newuser - The name of the user to be granted permission.
  * @param {function} cb - The callback function in the form of cb(err,response).
@@ -221,7 +227,8 @@ function File_AddReadAccess(filename,newuser,cb)
 }
 
 /**
- * Revokes a user's read access permissions for the specified file
+ * Revokes a user's read access permissions for the specified file. 
+ * Response format: true if successful, false if failed.
  * @param {string} filename - The name of the relevant file.
  * @param {string} remuser - The name of the user whose permission is to be revoked
  * @param {function} cb - The callback function in the form of cb(err,response).
@@ -233,7 +240,8 @@ function File_RemReadAccess(filename,remuser,cb)
 }
 
 /**
- * Grants a user write access permissions for the specified file
+ * Grants a user write access permissions for the specified file.
+ * Response format: true if successful, false if failed.
  * @param {string} filename - The name of the relevant file.
  * @param {string} newuser - The name of the user to be granted permission.
  * @param {function} cb - The callback function in the form of cb(err,response).
@@ -245,7 +253,8 @@ function File_AddWriteAccess(filename,newuser,cb)
 }
 
 /**
- * Revokes a user's write access permissions for the specified file
+ * Revokes a user's write access permissions for the specified file.
+ * Response format: true if successful, false if failed.
  * @param {string} filename - The name of the relevant file.
  * @param {string} remuser - The name of the user whose permission is to be revoked
  * @param {function} cb - The callback function in the form of cb(err,response).
@@ -257,7 +266,8 @@ function File_RemWriteAccess(filename,remuser,cb)
 }
 
 /**
- * Grants a group read access permissions for the specified file
+ * Grants a group read access permissions for the specified file.
+ * Response format: true if successful, false if failed.
  * @param {string} filename - The name of the relevant file.
  * @param {string} newgroup - The name of the group to be granted permission.
  * @param {function} cb - The callback function in the form of cb(err,response).
@@ -269,7 +279,8 @@ function File_AddGroupReadAccess(filename,newgroup,cb)
 }
 
 /**
- * Revokes a group's read access permissions for the specified file
+ * Revokes a group's read access permissions for the specified file.
+ * Response format: true if successful, false if failed.
  * @param {string} filename - The name of the relevant file.
  * @param {string} remuser - The name of the group whose permission is to be revoked
  * @param {function} cb - The callback function in the form of cb(err,response).
@@ -281,7 +292,8 @@ function File_RemGroupReadAccess(filename,remgroup,cb)
 }
 
 /**
- * Grants a group write access permissions for the specified file
+ * Grants a group write access permissions for the specified file.
+ * Response format: true if successful, false if failed.
  * @param {string} filename - The name of the relevant file.
  * @param {string} newgroup - The name of the group to be granted permission.
  * @param {function} cb - The callback function in the form of cb(err,response).
@@ -293,7 +305,8 @@ function File_AddGroupWriteAccess(filename,newgroup,cb)
 }
 
 /**
- * Revokes a group's write access permissions for the specified file
+ * Revokes a group's write access permissions for the specified file.
+ * Response format: true if successful, false if failed.
  * @param {string} filename - The name of the relevant file.
  * @param {string} remuser - The name of the group whose permission is to be revoked
  * @param {function} cb - The callback function in the form of cb(err,response).
@@ -306,6 +319,7 @@ function File_RemGroupWriteAccess(filename,remgroup,cb)
 
 /**
  * Creates a new group.
+ * Response format: true if successful, false if failed.
  * @param {string} groupname - The name of the group to be created.
  * @param {string} owner - The owner of the group to be created.
  * @param {function} cb - The callback function in the form of cb(err,response).
@@ -318,6 +332,7 @@ function Group_Create(groupname,owner,cb)
 
 /**
  * Deletes the specified group.
+ * Response format: true if successful, false if failed.
  * @param {string} groupname - The name of the group to be deleted.
  * @param {function} cb - The callback function in the form of cb(err,response).
  */
@@ -329,6 +344,7 @@ function Group_Destroy(groupname,cb)
 
 /**
  * Adds a user to an existing group.
+ * Response format: true if successful, false if failed.
  * @param {string} groupname - The name of the group.
  * @param {string} newuser - The name of the user to be added.
  * @param {function} cb - The callback function in the form of cb(err,response).
@@ -341,6 +357,7 @@ function Group_AddUser(groupname,newuser,cb)
 
 /**
  * Removes a user from an existing group.
+ * Response format: true if successful, false if failed.
  * @param {string} groupname - The name of the group.
  * @param {string} remuser - The name of the user to be removed.
  * @param {function} cb - The callback function in the form of cb(err,response).
@@ -352,7 +369,8 @@ function Group_RemoveUser(groupname,remuser,cb)
 }
 
 /**
- * Checks if the specified user is a member of a group
+ * Checks if the specified user is a member of a group.
+ * Response format: true if successful, false if failed.
  * @param {string} groupname - The name of the group.
  * @param {string} checkuser - The name of the user to be checked.
  * @param {function} cb - The callback function in the form of cb(err,response).
@@ -364,7 +382,8 @@ function Group_CheckUser(groupname,checkuser,cb)
 }
 
 /**
- * Checks if the specified user is the owner of a group
+ * Checks if the specified user is the owner of a group.
+ * Response format: true if successful, false if failed.
  * @param {string} groupname - The name of the group.
  * @param {string} checkuser - The name of the user to be checked.
  * @param {function} cb - The callback function in the form of cb(err,response).
@@ -376,7 +395,8 @@ function Group_CheckOwner(groupname,checkowner,cb)
 }
 
 /**
- * Return a specific file if the specified group can read it
+ * Return a specific file if the specified group can read it.
+ * Response format: Associative array of files.
  * @param {string} groupname - The name of the group attempting to read the file.
  * @param {string} filename - The name of the file to be retrieved.
  * @param {function} cb - The callback function in the form of cb(err,response).
@@ -388,7 +408,8 @@ function Group_CheckReadAccessFile(groupname, filename, cb)
 }
 
 /**
- * Return a specific file if the specified group can write to it
+ * Return a specific file if the specified group can write to it.
+ * Response format: Associative array of files.
  * @param {string} groupname - The name of the group attempting to write to the file.
  * @param {string} filename - The name of the file to be retrieved.
  * @param {function} cb - The callback function in the form of cb(err,response).

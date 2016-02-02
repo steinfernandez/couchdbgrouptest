@@ -1,43 +1,6 @@
 var couch_module = require("../couch_module.js");
 var assert = require('assert');
 
-/*
-function done(result)
-{
-	console.log("haha stuff also here is your result: ");
-	console.log(result);
-	if(result == true)
-	{
-		stepnum++;
-		functions[stepnum];
-	}
-	return;
-}
-
-function bodycallback(body)
-{
-	console.log("here is your body result");
-	console.log(body);
-	return;
-}
-
-var testusercreate = couch_module.user.create("testuser1","testpwd1", "11-21-2015", booleancallback);
-var testusercheckinfo = couch_module.user.checkinfo("testuser1",bodycallback);
-
-      functions = [
-        couch_module.user.create("testuser1","testpwd1", "11-21-2015", booleancallback),
-        //couch_module.user.checkinfo("testuser1",bodycallback),
-        couch_module.group.create("testgroup1","testowner1",booleancallback),
-        couch_module.group.adduser("testgroup1","user2",booleancallback),
-	couch_module.group.checkuser("testgroup1","user3",booleancallback),
-        couch_module.group.checkowner("testgroup1","testowner1",booleancallback),
-	couch_module.group.adduser("testgroup1","user3",booleancallback),
-	couch_module.group.removeuser("testgroup1","user2",booleancallback),
-      ]
-
-functions[0];
-*/
-
 var FC_truecheck = "truecheck";
 var FC_emptycheck = "emptycheck";
 var FC_errcheck = "errcheck";
@@ -47,35 +10,33 @@ var CR_true = true;
 var CR_filecheck_basic1 = "this is a test gibber doc";
 var CR_filecheck_basic2 = "this is an edited test gibber doc";
 
+
+/* Upon completion of each function, this function is called to check the results based on the values bound to it. 
+this[0] - expected return value. only used for FC_truecheck.
+this[1] - done function to be called on successful completion of the test.
+this[2] - type of test. this is used to determine which part of the response should be checked and how. 
+ */
 function callbackfn(err,response)
 {	
 	if(this[2] == FC_truecheck)
 	{
-	//console.log(err);
 	if((!err)&&(this[0] == response))
 		this[1]();
 	}
 	else if(this[2] == FC_emptycheck)
 	{
-		//console.log("thisisresponse");
-		//console.log(response.length);
-		//console.log(CR_empty);
 		if((!err)&&(0 == response.length))
 		this[1]();
 	}
 	else if(this[2] == FC_errcheck)
 	{
-		//console.log("this is errcheck response");
-		//console.log(err);
 		if(response == false)
 		{
 			this[1]();
-			//console.log("failed successfully");
 		}
 	}
 	else 
 	{
-		//console.log("this is response"+response[0][this[2]]);
 		if((!err)&&(this[0] == response[0][this[2]]))
 			this[1]();
 	}
