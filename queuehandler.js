@@ -35,6 +35,7 @@ function file_obj()
 {
 	this.publish = File_Publish;
 	this.edit = File_Edit;
+	this.setispublic = File_SetIsPublic;
 	this.addreadaccess = File_AddReadAccess;
 	this.remreadaccess = File_RemReadAccess;
 	this.addwriteaccess = File_AddWriteAccess;
@@ -193,9 +194,9 @@ function User_CheckWriteAccessFile(username,filename,cb)
  * @param {string} date - The current date.
  * @param {function} cb - The callback function in the form of cb(err,response).
  */
-function File_Publish(username,filename,text,date,cb)
+function File_Publish(username,filename,text,date,language,tags,notes,cb)
 {
-	q.push(function(queuecb){couch_module.file.publish(username,filename,text,date,(err,response) => {cb(err,response); queuecb();});});
+	q.push(function(queuecb){couch_module.file.publish(username,filename,text,date,language,tags,notes,(err,response) => {cb(err,response); queuecb();});});
 	ensurequeue();
 }
 
@@ -209,6 +210,19 @@ function File_Publish(username,filename,text,date,cb)
 function File_Edit(filename,newtext,cb)
 {
 	q.push(function(queuecb){couch_module.file.edit(filename,newtext,(err,response) => {cb(err,response); queuecb();});});
+	ensurequeue();
+}
+
+/**
+ * Sets a file as publicly viewable by anyone. 
+ * Response format: true if successful, false if failed.
+ * @param {string} filename - The name of the relevant file.
+ * @param {string} newuser - The name of the user to be granted permission.
+ * @param {function} cb - The callback function in the form of cb(err,response).
+ */
+function File_SetIsPublic(filename,isPublic,cb)
+{
+	q.push(function(queuecb){couch_module.file.setispublic(filename,ispublic,(err,response) => {cb(err,response); queuecb();});});
 	ensurequeue();
 }
 

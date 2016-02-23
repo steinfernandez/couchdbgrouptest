@@ -32,6 +32,7 @@ function file_obj()
 {
 	this.publish = File_Publish;
 	this.edit = File_Edit;
+	this.setispublic = File_SetIsPublic;
 	this.addreadaccess = File_AddReadAccess;
 	this.remreadaccess = File_RemReadAccess;
 	this.addwriteaccess = File_AddWriteAccess;
@@ -71,7 +72,7 @@ function User_CheckInfo(username,cb)
 	var result = false;
 	blah.get(username, { revs_info: true }, function(err, body) {
 	if(!err)
-		result = true;
+		result = body;
 	cb(err,result);
 	});
 }
@@ -156,9 +157,9 @@ function User_CheckWriteAccessFile(username, filename, cb)
 	});
 }
 
-function File_Publish(username,filename,text,date,cb)
+function File_Publish(username,filename,text,date,language,tags,notes,cb)
 {
-	blah.insert({type: "publication", "author": username, "readaccess":[username],"writeaccess":[username],"groupreadaccess":[],"groupwriteaccess":[],"publicationDate":date,"text":text}, "gibbertest/publications/"+username+filename, function(err, body) {
+	blah.insert({type: "publication", "author": username, "isPublic": false,"readaccess":[username],"writeaccess":[username],"groupreadaccess":[],"groupwriteaccess":[],"publicationDate":date, "lastModified":date, "language": language, "tags": tags, "notes": notes, "text":text}, "gibbertest/publications/"+username+filename, function(err, body) {
 	var result = false;
 	if (!err)
 		result = true;
@@ -169,12 +170,14 @@ function File_Publish(username,filename,text,date,cb)
 function File_Edit(filename,newtext,cb)
 {
 	var result = false;
-	var newfile = {type: "publication", "author": "", "readaccess":"","writeaccess":"","groupreadaccess":[],"groupwriteaccess":[],"publicationDate":"","text":""};
+	var newfile = {type: "publication", "author": "", "isPublic":"","readaccess":"","writeaccess":"","groupreadaccess":[],"groupwriteaccess":[],"publicationDate":"","lastModified":"","language":"","tags":"","notes":"","text":""};
 	blah.get(filename, { revs_info: true }, function(err1, body) {
 	if (!err1)
 	{	
 		newfile = body;
 		newfile.text = newtext;
+		var date = new Date(),day  = date.getDate(),month = date.getMonth() + 1,year = date.getFullYear(),time = date.toLocaleTimeString();
+		newfile.lastModified = [year,month,day,time];
 		blah.insert(newfile, filename, function(err2, body) {
 	if (!err2)
 	{
@@ -187,23 +190,44 @@ function File_Edit(filename,newtext,cb)
 	});
 }
 
+function File_SetIsPublic(filename,isPublic,cb)
+{
+	var result = false;
+	var newfile = {type: "publication", "author": "", "isPublic":"","readaccess":"","writeaccess":"","groupreadaccess":[],"groupwriteaccess":[],"publicationDate":"","lastModified":"","language":"","tags":"","notes":"","text":""};
+	blah.get(filename, { revs_info: true }, function(err1, body) {
+	if (!err1)
+	{	
+		newfile = body;
+		newfile.isPublic = isPublic;
+		blah.insert(newfile, filename, function(err2, body) {
+		if (!err2)
+		{
+			result = true;
+			cb(err2,result);
+		}
+		});
+	}
+	cb(err1,result);
+	});
+}
+
 function File_AddReadAccess(filename,newuser,cb)
 {
 	var result = false;
-	var newfile = {type: "publication", "author": "", "readaccess":"","writeaccess":"","groupreadaccess":[],"groupwriteaccess":[],"publicationDate":"","text":""};
+	var newfile = {type: "publication", "author": "", "isPublic":"","readaccess":"","writeaccess":"","groupreadaccess":[],"groupwriteaccess":[],"publicationDate":"","lastModified":"","language":"","tags":"","notes":"","text":""};
 	blah.get(filename, { revs_info: true }, function(err1, body) {
 	if (!err1)
 	{	
 		newfile = body;
 		if (newfile.readaccess.indexOf(newuser) == -1)
 			newfile.readaccess.push(newuser);
-	blah.insert(newfile, filename, function(err2, body) {
-	if (!err2)
-	{
-		result = true;
-		cb(err2,result);
-	}
-	});
+		blah.insert(newfile, filename, function(err2, body) {
+		if (!err2)
+		{
+			result = true;
+			cb(err2,result);
+		}
+		});
 	}
 	cb(err1,result);
 	});
@@ -212,7 +236,7 @@ function File_AddReadAccess(filename,newuser,cb)
 function File_RemReadAccess(filename,remuser,cb)
 {
 	var result = false;
-	var newfile = {type: "publication", "author": "", "readaccess":"","writeaccess":"","groupreadaccess":[],"groupwriteaccess":[],"publicationDate":"","text":""};
+	var newfile = {type: "publication", "author": "", "isPublic":"","readaccess":"","writeaccess":"","groupreadaccess":[],"groupwriteaccess":[],"publicationDate":"","lastModified":"","language":"","tags":"","notes":"","text":""};
 	blah.get(filename, { revs_info: true }, function(err1, body) {
 	if (!err1)
 	{	
@@ -220,13 +244,13 @@ function File_RemReadAccess(filename,remuser,cb)
 		var i = newfile.readaccess.indexOf(remuser);
 		if(i != -1) 
 			newfile.readaccess.splice(i, 1);
-	blah.insert(newfile, filename, function(err2, body) {
-	if (!err2)
-	{
-		result = true;
-		cb(err2,result);
-	}
-	});
+		blah.insert(newfile, filename, function(err2, body) {
+		if (!err2)
+		{
+			result = true;
+			cb(err2,result);
+		}
+		});
 	}
 	cb(err1,result);
 	});
@@ -235,7 +259,7 @@ function File_RemReadAccess(filename,remuser,cb)
 function File_AddWriteAccess(filename,newuser,cb)
 {
 	var result = false;
-	var newfile = {type: "publication", "author": "", "readaccess":"","writeaccess":"","groupreadaccess":[],"groupwriteaccess":[],"publicationDate":"","text":""};
+	var newfile = {type: "publication", "author": "", "isPublic":"","readaccess":"","writeaccess":"","groupreadaccess":[],"groupwriteaccess":[],"publicationDate":"","lastModified":"","language":"","tags":"","notes":"","text":""};
 	blah.get(filename, { revs_info: true }, function(err1, body) {
 	if (!err1)
 	{	
@@ -257,7 +281,7 @@ function File_AddWriteAccess(filename,newuser,cb)
 function File_RemWriteAccess(filename,remuser,cb)
 {
 	var result = false;
-	var newfile = {type: "publication", "author": "", "readaccess":"","writeaccess":"","groupreadaccess":[],"groupwriteaccess":[],"publicationDate":"","text":""};
+	var newfile = {type: "publication", "author": "", "isPublic":"","readaccess":"","writeaccess":"","groupreadaccess":[],"groupwriteaccess":[],"publicationDate":"","lastModified":"","language":"","tags":"","notes":"","text":""};
 	blah.get(filename, { revs_info: true }, function(err1, body) {
 	if (!err1)
 	{	
@@ -280,7 +304,7 @@ function File_RemWriteAccess(filename,remuser,cb)
 function File_AddGroupReadAccess(filename,newgroup,cb)
 {
 	var result = false;
-	var newfile = {type: "publication", "author": "", "readaccess":"","writeaccess":"","groupreadaccess":[],"groupwriteaccess":[],"publicationDate":"","text":""};
+	var newfile = {type: "publication", "author": "", "isPublic":"","readaccess":"","writeaccess":"","groupreadaccess":[],"groupwriteaccess":[],"publicationDate":"","lastModified":"","language":"","tags":"","notes":"","text":""};
 	blah.get(filename, { revs_info: true }, function(err1, body) {
 	if (!err1)
 	{	
@@ -302,7 +326,7 @@ function File_AddGroupReadAccess(filename,newgroup,cb)
 function File_RemGroupReadAccess(filename,remgroup,cb)
 {
 	var result = false;
-	var newfile = {type: "publication", "author": "", "readaccess":"","writeaccess":"","groupreadaccess":[],"groupwriteaccess":[],"publicationDate":"","text":""};
+	var newfile = {type: "publication", "author": "", "isPublic":"","readaccess":"","writeaccess":"","groupreadaccess":[],"groupwriteaccess":[],"publicationDate":"","lastModified":"","language":"","tags":"","notes":"","text":""};
 	blah.get(filename, { revs_info: true }, function(err1, body) {
 	if (!err1)
 	{	
@@ -325,7 +349,7 @@ function File_RemGroupReadAccess(filename,remgroup,cb)
 function File_AddGroupWriteAccess(filename,newgroup,cb)
 {
 	var result = false;
-	var newfile = {type: "publication", "author": "", "readaccess":"","writeaccess":"","groupreadaccess":[],"groupwriteaccess":[],"publicationDate":"","text":""};
+	var newfile = {type: "publication", "author": "", "isPublic":"","readaccess":"","writeaccess":"","groupreadaccess":[],"groupwriteaccess":[],"publicationDate":"","lastModified":"","language":"","tags":"","notes":"","text":""};
 	blah.get(filename, { revs_info: true }, function(err1, body) {
 	if (!err1)
 	{	
@@ -347,7 +371,7 @@ function File_AddGroupWriteAccess(filename,newgroup,cb)
 function File_RemGroupWriteAccess(filename,remgroup,cb)
 {
 	var result = false;
-	var newfile = {type: "publication", "author": "", "readaccess":"","writeaccess":"","groupreadaccess":[],"groupwriteaccess":[],"publicationDate":"","text":""};
+	var newfile = {type: "publication", "author": "", "isPublic":"","readaccess":"","writeaccess":"","groupreadaccess":[],"groupwriteaccess":[],"publicationDate":"","lastModified":"","language":"","tags":"","notes":"","text":""};
 	blah.get(filename, { revs_info: true }, function(err1, body) {
 	if (!err1)
 	{	
