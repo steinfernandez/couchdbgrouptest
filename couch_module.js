@@ -32,6 +32,7 @@ function file_obj()
 {
 	this.publish = File_Publish;
 	this.edit = File_Edit;
+	this.setmetadata = File_SetMetadata;
 	this.setispublic = File_SetIsPublic;
 	this.addreadaccess = File_AddReadAccess;
 	this.remreadaccess = File_RemReadAccess;
@@ -176,6 +177,31 @@ function File_Edit(filename,newtext,cb)
 	{	
 		newfile = body;
 		newfile.text = newtext;
+		var date = new Date(),day  = date.getDate(),month = date.getMonth() + 1,year = date.getFullYear(),time = date.toLocaleTimeString();
+		newfile.lastModified = [year,month,day,time];
+		blah.insert(newfile, filename, function(err2, body) {
+	if (!err2)
+	{
+		result = true;
+		cb(err2,result);
+	}
+	});
+	}
+	cb(err1,result);
+	});
+}
+
+function File_SetMetadata(filename,newlanguage,newtags,newnotes,cb)
+{
+	var result = false;
+	var newfile = {type: "publication", "author": "", "isPublic":"","readaccess":"","writeaccess":"","groupreadaccess":[],"groupwriteaccess":[],"publicationDate":"","lastModified":"","language":"","tags":"","notes":"","text":""};
+	blah.get(filename, { revs_info: true }, function(err1, body) {
+	if (!err1)
+	{	
+		newfile = body;
+		newfile.language = newlanguage;
+		newfile.notes = newnotes;
+		newfile.tags = newfile.tags.concat(newtags);
 		var date = new Date(),day  = date.getDate(),month = date.getMonth() + 1,year = date.getFullYear(),time = date.toLocaleTimeString();
 		newfile.lastModified = [year,month,day,time];
 		blah.insert(newfile, filename, function(err2, body) {

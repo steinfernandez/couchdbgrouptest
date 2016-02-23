@@ -35,6 +35,7 @@ function file_obj()
 {
 	this.publish = File_Publish;
 	this.edit = File_Edit;
+	this.setmetadata = File_SetMetadata;
 	this.setispublic = File_SetIsPublic;
 	this.addreadaccess = File_AddReadAccess;
 	this.remreadaccess = File_RemReadAccess;
@@ -201,7 +202,7 @@ function File_Publish(username,filename,text,date,language,tags,notes,cb)
 }
 
 /**
- * Edits an existing file. 
+ * Edits the text in an existing file. 
  * Response format: true if successful, false if failed.
  * @param {string} filename - The name of the file to be edited.
  * @param {string} newtext - The new contents of the file.
@@ -210,6 +211,21 @@ function File_Publish(username,filename,text,date,language,tags,notes,cb)
 function File_Edit(filename,newtext,cb)
 {
 	q.push(function(queuecb){couch_module.file.edit(filename,newtext,(err,response) => {cb(err,response); queuecb();});});
+	ensurequeue();
+}
+
+/**
+ * Edits the metadata of an existing file [currently language,tags and notes]
+ * Response format: true if successful, false if failed.
+ * @param {string} filename - The name of the file to be edited.
+ * @param {string} newlanguage - The new language of the file.
+ * @param {array} tags - The new tags to be added to the file. Pass this as an array of string(s).
+ * @param {string} newnotes - The new notes of the file.
+ * @param {function} cb - The callback function in the form of cb(err,response).
+ */
+function File_SetMetadata(filename,newlanguage,newtags,newnotes,cb)
+{
+	q.push(function(queuecb){couch_module.file.setmetadata(filename,newlanguage,newtags,newnotes,(err,response) => {cb(err,response); queuecb();});});
 	ensurequeue();
 }
 
