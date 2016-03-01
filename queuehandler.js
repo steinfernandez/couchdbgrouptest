@@ -13,6 +13,9 @@ function user_obj()
 	this.destroy = User_Destroy;
 	this.checkinfo = User_CheckInfo;
 	this.changepassword = User_ChangePassword;
+	this.checkifauthor = User_CheckIfAuthor;
+	this.authorizeread = User_AuthorizeRead;
+	this.authorizewrite = User_AuthorizeWrite;
 	this.checkreadaccessall = User_CheckReadAccessAll;
 	this.checkwriteaccessall = User_CheckWriteAccessAll;
 	this.checkwriteaccessfile = User_CheckWriteAccessFile;
@@ -62,7 +65,7 @@ module.exports = queuehandler;
 var isempty = true;
 
 q.concurrency = 1;
-q.timeout = 1000; 
+q.timeout = 3000; 
 
 
 q.on("timeout", function(next, job)
@@ -133,6 +136,45 @@ function User_CheckInfo(username,cb)
 function User_ChangePassword(username,newpwd,cb)
 {
 	q.push(function(queuecb){couch_module.user.create(username,newpwd,(err,response) => {cb(err,response); queuecb();});});
+	ensurequeue();
+}
+
+/**
+ * Checks if the specified user is the owner of the specified file.
+ * Response format: true if authorship verified, false otherwise.
+ * @param {string} username - The name of the user.
+ * @param {string} filename - The name of the file.
+ * @param {function} cb - The callback function in the form of cb(err,response).
+ */
+function User_CheckIfAuthor(username,filename,cb)
+{
+	q.push(function(queuecb){couch_module.user.checkifauthor(username,filename,(err,response) => {cb(err,response); queuecb();});});
+	ensurequeue();
+}
+
+/**
+ * Checks if the specified user or any groups they belong to are in the file's readaccess lists.
+ * Response format: true if access verified, false otherwise.
+ * @param {string} username - The name of the user.
+ * @param {string} filename - The name of the file.
+ * @param {function} cb - The callback function in the form of cb(err,response).
+ */
+function User_AuthorizeRead(username,filename,cb)
+{
+	q.push(function(queuecb){couch_module.user.authorizeread(username,filename,(err,response) => {cb(err,response); queuecb();});});
+	ensurequeue();
+}
+
+/**
+ * Checks if the specified user or any groups they belong to are in the file's writeaccess lists.
+ * Response format: true if access verified, false otherwise.
+ * @param {string} username - The name of the user.
+ * @param {string} filename - The name of the file.
+ * @param {function} cb - The callback function in the form of cb(err,response).
+ */
+function User_AuthorizeWrite(username,filename,cb)
+{
+	q.push(function(queuecb){couch_module.user.authorizewrite(username,filename,(err,response) => {cb(err,response); queuecb();});});
 	ensurequeue();
 }
 

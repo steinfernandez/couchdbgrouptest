@@ -10,6 +10,9 @@ function user_obj()
 	this.destroy = User_Destroy;
 	this.checkinfo = User_CheckInfo;
 	this.changepassword = User_ChangePassword;
+	this.checkifauthor = User_CheckIfAuthor;
+	this.authorizeread = User_AuthorizeRead;
+	this.authorizewrite = User_AuthorizeWrite;
 	this.checkreadaccessall = User_CheckReadAccessAll;
 	this.checkwriteaccessall = User_CheckWriteAccessAll;
 	this.checkwriteaccessfile = User_CheckWriteAccessFile;
@@ -82,7 +85,7 @@ function User_CheckInfo(username,cb)
 function User_ChangePassword(username,newpwd,cb)
 {
 	var result = false;
-	var newbody = {"type": "user","password": "","joinDate": "","website": "","affiliation": "","email": "","following": [],"friends": []};
+	var newbody = {"type": "user","password": password,"grouplist":[],"joinDate": date,"website": "","affiliation": "","email": "","following": [],"friends": []};
 	blah.get(username, { revs_info: true }, function(err1, body) {
 	if (!err1)
 	{	
@@ -116,6 +119,113 @@ function User_Destroy(username,cb)
 	}
 	cb(err1,result);
 	});	
+}
+
+function User_CheckIfAuthor(username,filename,cb)
+{
+	var verified = false;
+	var newfile = {type: "publication", "author": "", "isPublic":"","readaccess":"","writeaccess":"","groupreadaccess":[],"groupwriteaccess":[],"publicationDate":"","lastModified":"","language":"","tags":"","notes":"","text":""};
+	blah.get(filename, { revs_info: true }, function(err1, body) {
+	if (!err1)
+	{	
+		newfile = body;
+		//console.log(newfile);
+		if(newfile.author == username)
+			verified = true;
+	}
+	cb(err1,verified);
+	});
+}
+
+function User_AuthorizeRead(username,filename,cb)
+{
+	var verified = false;
+	//var user_grouplist = [];
+	var filebody = null;
+	blah.get(username, { revs_info: true }, function(err1, body1) {
+	if (!err1)
+	{	
+		var user_grouplist = body1.grouplist;
+		blah.get(filename, { revs_info: true }, function(err2, body2) {
+		if(!err2)
+		{
+			if(body2.readaccess.indexOf(username)!=-1)
+			{
+				verified = true;
+				console.log("verified has been set to true");
+			}
+			else
+			{
+				console.log(body1);
+				for(i=0;i<body1.grouplist.length;i++)
+				{
+					if(body2.groupreadaccess.indexOf(user_grouplist[i])!=-1)
+					{
+						verified = true;
+						console.log("verified has been set to true");
+					}
+				}
+			}
+		}
+		cb(err1,verified);
+		console.log("the verified status for authorizeRead is "+verified);
+		});
+		
+	}
+	else
+	{
+		cb(err1,verified);
+	}
+	});
+}
+
+function User_AuthorizeWrite(username,filename,cb)
+{
+	var verified = false;
+	//var user_grouplist = [];
+	var filebody = null;
+	blah.get(username, { revs_info: true }, function(err1, body1) {
+	if (!err1)
+	{	
+		var user_grouplist = body1.grouplist;
+		blah.get(filename, { revs_info: true }, function(err2, body2) {
+		if(!err2)
+		{
+			console.log("retrieved file, checking writeaccess...");
+			if(body2.writeaccess.indexOf(username)!=-1)
+			{
+				verified = true;
+				console.log("verified has been set to true");
+			}
+			else
+			{
+				console.log("user not found in write list, checking groups....");
+				for(i=0;i<body1.grouplist.length;i++)
+				{
+					if(body2.groupwriteaccess.indexOf(user_grouplist[i])!=-1)
+					{
+						verified = true;
+						console.log("verified has been set to true");
+					}
+				}
+			}
+		}
+		else
+		{
+			console.log("failed to retrieve file");
+			console.log(err2);
+		}
+		cb(err1,verified);
+		console.log("the verified status for authorizeWrite is "+verified);
+		});
+		
+	}
+	else
+	{
+		console.log("err1"+err1);
+		cb(err1,verified);
+	}
+	});
 }
 
 function User_CheckReadAccessAll(username, cb)
@@ -216,16 +326,6 @@ function File_SetMetadata(filename,newlanguage,newtags,newnotes,cb)
 	cb(err1,result);
 	});
 }
-/*
-function User_Verify(username,filename,cb)
-{
-	var verified = false;
-	var user_grouplist = [];
-	blah.get(username, { revs_info: true }, function(err, body) {
-	if(!err)
-		user_grouplist = user.
-	});
-}*/
 
 function File_SetIsPublic(filename,isPublic,cb)
 {
@@ -430,7 +530,7 @@ function File_RemGroupWriteAccess(filename,remgroup,cb)
 
 function Group_Create(groupname,owner,cb)
 {
-	blah.insert({"owner": owner,"type": "group","members": [owner]}, groupname, function(err, body) {
+	blah.insert({"owner": owner,"type": "group","members": [owner]}, "gibbertest/groups/"+groupname, function(err, body) {
 	var result = false;
 	if (!err)
 		result = true;
@@ -452,38 +552,60 @@ function Group_Destroy(groupname,cb)
 
 function Group_AddUser(groupname,newuser,cb)
 {
+	var result = false;
 	var newfile = {"owner": "","type": "group","members": []};
-	blah.get(groupname, { revs_info: true }, function(err, body) {
-	if (!err)
+	blah.get(groupname, { revs_info: true }, function(err1, body1) {
+	if (!err1)
 	{	
-		newgroup = body;
+		newgroup = body1;
 		newgroup.members.push(newuser);
-		blah.insert(newgroup, groupname, function(err, body) {
+		blah.insert(newgroup, groupname, function(err2, body2) {
 		var result = false;
-		if (!err)
+		if (!err2)
 		{
 			//adding to user grouplist
 			console.log("usergrouplisttrigger");
 			var newbody = {"type": "user","password": "","grouplist":[],"joinDate": "","website": "","affiliation": "","email": "","following": [],"friends": []}
-			blah.get(newuser, { revs_info: true }, function(err1, body) {
-			if (!err1)
+			blah.get(newuser, { revs_info: true }, function(err3, body3) {
+			if (!err3)
 			{	
-				newbody = body;
+				newbody = body3;
 				console.log(newbody);
 				newbody.grouplist.push(groupname);
-				blah.insert(newbody, newuser, function(err2, body) {
-				if (!err2)
+				blah.insert(newbody, newuser, function(err4, body4) {
+				if (!err4)
 				{
 					console.log("successfully edited user grouplist");
 					result = true;
+					cb(err4,result);
+				}
+				else
+				{
+					cb(err4,result);
+					console.log(err4);
 				}
 				});
+			}
+			else
+			{
+				cb(err3,result);
+				console.log(err3);
 			}
 			});
 			//result = true;
 		}
-		cb(err,result);
+		else
+		{
+			cb(err2,result);
+			console.log(err2);
+		}
 		});
+	}
+	else
+	{
+		cb(err1,result);
+		console.log("can't find group?????");
+		console.log(err1);
 	}
 	});
 }
