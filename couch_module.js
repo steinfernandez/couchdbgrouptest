@@ -470,8 +470,8 @@ function Group_AddUser(groupname,newuser,cb)
 			{	
 				newbody = body;
 				console.log(newbody);
-				newbody["grouplist"].push(groupname);
-				blah.insert(newbody, username, function(err2, body) {
+				newbody.grouplist.push(groupname);
+				blah.insert(newbody, newuser, function(err2, body) {
 				if (!err2)
 				{
 					console.log("successfully edited user grouplist");
@@ -513,7 +513,7 @@ function Group_RemoveUser(groupname,remuser,cb)
 		if(!err)
 		{	
 			//remove group from user list
-			var newbody = {"type": "user","password": "","grouplist":[],"joinDate": date,"website": "","affiliation": "","email": "","following": [],"friends": []};
+			var newbody = {"type": "user","password": "","grouplist":[],"joinDate": "","website": "","affiliation": "","email": "","following": [],"friends": []};
 			blah.get(remuser, { revs_info: true }, function(err1, body) {
 			if (!err1)
 			{	
@@ -530,7 +530,7 @@ function Group_RemoveUser(groupname,remuser,cb)
 				{
 					newbody.grouplist.splice(index, 1);
 				}
-				blah.insert(newbody, username, function(err2, body) {
+				blah.insert(newbody, remuser, function(err2, body) {
 				if (!err2)
 				{
 					result = true;

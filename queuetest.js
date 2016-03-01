@@ -7,8 +7,9 @@ function cb(err, response)
 
 
 
-queuehandler.user.create("magicuser","magicuser","date",cb);
-//queuehandler.group.adduser("gibbertest/groups/group0","user3",cb);
+//queuehandler.user.create("magicuser","magicuser","date",cb);
+//queuehandler.group.adduser("gibbertest/groups/group0","magicuser",cb);
+queuehandler.group.removeuser("gibbertest/groups/group0","magicuser",cb);
 /*
 queuehandler.file.addwriteaccess("gibbertest/publications/pub2","magicuser2",cb);
 queuehandler.file.addgroupreadaccess("gibbertest/publications/pub2","magicgroup",cb);
