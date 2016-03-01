@@ -59,7 +59,7 @@ module.exports = couch_module;
 function User_Create(username,password,date,cb)
 {
 	var result = false;
-	blah.insert({"type": "user","password": password,"joinDate": date,"website": "","affiliation": "","email": "","following": [],"friends": []}, username, function(err, body) {
+	blah.insert({"type": "user","password": password,"grouplist":[],"joinDate": date,"website": "","affiliation": "","email": "","following": [],"friends": []}, username, function(err, body) {
 	if (!err)	
 		cb(err,true);
 	else
@@ -70,7 +70,7 @@ function User_Create(username,password,date,cb)
 
 function User_CheckInfo(username,cb)
 {
-	var result = false;
+	var result = {};
 	blah.get(username, { revs_info: true }, function(err, body) {
 	if(!err)
 		result = body;
@@ -198,6 +198,7 @@ function File_SetMetadata(filename,newlanguage,newtags,newnotes,cb)
 	blah.get(filename, { revs_info: true }, function(err1, body) {
 	if (!err1)
 	{	
+		//TODO: check for null and set defaults so all arguments don't have to be populated
 		newfile = body;
 		newfile.language = newlanguage;
 		newfile.notes = newnotes;
@@ -215,6 +216,16 @@ function File_SetMetadata(filename,newlanguage,newtags,newnotes,cb)
 	cb(err1,result);
 	});
 }
+/*
+function User_Verify(username,filename,cb)
+{
+	var verified = false;
+	var user_grouplist = [];
+	blah.get(username, { revs_info: true }, function(err, body) {
+	if(!err)
+		user_grouplist = user.
+	});
+}*/
 
 function File_SetIsPublic(filename,isPublic,cb)
 {
@@ -450,7 +461,27 @@ function Group_AddUser(groupname,newuser,cb)
 		blah.insert(newgroup, groupname, function(err, body) {
 		var result = false;
 		if (!err)
-			result = true;
+		{
+			//adding to user grouplist
+			console.log("usergrouplisttrigger");
+			var newbody = {"type": "user","password": "","grouplist":[],"joinDate": "","website": "","affiliation": "","email": "","following": [],"friends": []}
+			blah.get(newuser, { revs_info: true }, function(err1, body) {
+			if (!err1)
+			{	
+				newbody = body;
+				console.log(newbody);
+				newbody["grouplist"].push(groupname);
+				blah.insert(newbody, username, function(err2, body) {
+				if (!err2)
+				{
+					console.log("successfully edited user grouplist");
+					result = true;
+				}
+				});
+			}
+			});
+			//result = true;
+		}
 		cb(err,result);
 		});
 	}
@@ -480,7 +511,35 @@ function Group_RemoveUser(groupname,remuser,cb)
 		blah.insert(newgroup, groupname, function(err, body) {
 		var result = false;
 		if(!err)
-			result = true;
+		{	
+			//remove group from user list
+			var newbody = {"type": "user","password": "","grouplist":[],"joinDate": date,"website": "","affiliation": "","email": "","following": [],"friends": []};
+			blah.get(remuser, { revs_info: true }, function(err1, body) {
+			if (!err1)
+			{	
+				newbody = body;
+				for(i=0;i<newbody.grouplist.length;i++)
+				{
+					if(newbody.grouplist[i] == groupname)
+					{
+						index = i;
+						break;
+					}
+				}
+				if (index > -1) 
+				{
+					newbody.grouplist.splice(index, 1);
+				}
+				blah.insert(newbody, username, function(err2, body) {
+				if (!err2)
+				{
+					result = true;
+				}
+				});
+			}
+			});
+			//result = true;
+		}
 		cb(err,result);
 		});
 	}
