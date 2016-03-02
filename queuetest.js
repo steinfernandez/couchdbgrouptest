@@ -8,8 +8,8 @@ function cb(err, response)
 
 
 queuehandler.user.create("magicuser","magicuser","date",cb);
-queuehandler.group.create("magicgroup","magicuser",cb);
-queuehandler.group.adduser("gibbertest/groups/magicgroup","magicuser",cb);
+//queuehandler.group.create("magicgroup","magicuser",cb);
+//queuehandler.group.adduser("gibbertest/groups/magicgroup","magicuser",cb);
 //queuehandler.group.removeuser("gibbertest/groups/group0","magicuser",cb);
 /*
 
@@ -23,7 +23,8 @@ queuehandler.file.publish("user2","fileblah","textblah","dateblah","languageblah
 //queuehandler.file.addreadaccess("gibbertest/publications/user2fileblah","magicuser",cb);
 //queuehandler.file.addgroupreadaccess("gibbertest/publications/user2fileblah","gibbertest/groups/magicgroup",cb);
 //queuehandler.file.addwriteaccess("gibbertest/publications/user2fileblah","magicuser",cb);
-queuehandler.file.addgroupwriteaccess("gibbertest/publications/user2fileblah","gibbertest/groups/magicgroup",cb);
-queuehandler.user.authorizewrite("magicuser","gibbertest/publications/user2fileblah",cb);
+//queuehandler.file.addgroupwriteaccess("gibbertest/publications/user2fileblah","gibbertest/groups/magicgroup",cb);
+//queuehandler.user.authorizewrite("magicuser","gibbertest/publications/user2fileblah",cb);
+queuehandler.user.checkifauthor("user2","gibbertest/publications/user2fileblah",cb);
 
 

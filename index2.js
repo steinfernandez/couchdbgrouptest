@@ -388,11 +388,15 @@ app.post('fileaddreadaccess', function(req, res){
     res.send({ error:'you are not currently logged in.' })
     return
   }
-	queuehandler.file.addreadaccess(req.body.filename,req.body.newuser,function(err, response)
-	{
-	res.send({ response: response });
+	queuehandler.user.checkifauthor(req.user,req.body.filename, function(err1, response1) {
+		if(response1 == true)
+			queuehandler.file.addreadaccess(req.body.filename,req.body.newuser,function(err2, response2)
+			{
+			res.send({ response: response2 });
+			});
+		else
+			res.send({error:"User is not the author of this file."});
 	});
-	
 })
 
 app.post('fileremreadaccess', function(req, res){
@@ -400,11 +404,15 @@ app.post('fileremreadaccess', function(req, res){
     res.send({ error:'you are not currently logged in.' })
     return
   }
-	queuehandler.file.remreadaccess(req.body.filename,req.body.newuser,function(err, response)
-	{
-	res.send({ response: response });
+	queuehandler.user.checkifauthor(req.user,req.body.filename, function(err1,response1) {
+		if(response1 == true)
+			queuehandler.file.remreadaccess(req.body.filename,req.body.newuser,function(err2, response2)
+			{
+			res.send({ response: response2 });
+			});
+		else
+			res.send({error:"User is not the author of this file."});
 	});
-	
 })
 
 app.post('fileaddwriteaccess', function(req, res){
@@ -412,11 +420,15 @@ app.post('fileaddwriteaccess', function(req, res){
     res.send({ error:'you are not currently logged in.' })
     return
   }
-	queuehandler.file.addwriteaccess(req.body.filename,req.body.newuser,function(err, response)
-	{
-	res.send({ response: response });
+	queuehandler.user.checkifauthor(req.user,req.body.filename, function(err1,response1) {
+		if(response1 == true)
+			queuehandler.file.addwriteaccess(req.body.filename,req.body.newuser,function(err2, response2)
+			{
+			res.send({ response: response2 });
+			});
+		else
+			res.send({error:"User is not the author of this file."});
 	});
-	
 })
 
 app.post('fileremwriteaccess', function(req, res){
@@ -424,11 +436,15 @@ app.post('fileremwriteaccess', function(req, res){
     res.send({ error:'you are not currently logged in.' })
     return
   }
-	queuehandler.file.remwriteaccess(req.body.filename,req.body.newuser,function(err, response)
-	{
-	res.send({ response: response });
+	queuehandler.user.checkifauthor(req.user,req.body.filename, function(err1,response1) {
+		if(response1 == true)
+			queuehandler.file.remwriteaccess(req.body.filename,req.body.newuser,function(err2, response2)
+			{
+			res.send({ response: response2 });
+			});
+		else
+			res.send({error:"User is not the author of this file."});
 	});
-	
 })
 
 app.post('fileaddgroupreadaccess', function(req, res){
@@ -436,9 +452,14 @@ app.post('fileaddgroupreadaccess', function(req, res){
     res.send({ error:'you are not currently logged in.' })
     return
   }
-	queuehandler.file.addgroupreadaccess(req.body.filename,req.body.newgroup,function(err, response)
-	{
-	res.send({ response: response });
+	queuehandler.user.checkifauthor(req.user,req.body.filename, function(err1,response1) {
+		if(response1 == true)
+			queuehandler.file.addgroupreadaccess(req.body.filename,req.body.newgroup,function(err2, response2)
+			{
+			res.send({ response: response2 });
+			});
+		else
+			res.send({error:"User is not the author of this file."});
 	});
 })
 
@@ -447,9 +468,14 @@ app.post('fileremgroupreadaccess', function(req, res){
     res.send({ error:'you are not currently logged in.' })
     return
   }
-	queuehandler.file.remgroupreadaccess(req.body.filename,req.body.newgroup,function(err, response)
-	{
-	res.send({ response: response });
+	queuehandler.user.checkifauthor(req.user,req.body.filename, function(err1,response1) {
+		if(response1 == true)
+			queuehandler.file.remgroupreadaccess(req.body.filename,req.body.newgroup,function(err2, response2)
+			{
+			res.send({ response: response2 });
+			});
+		else
+			res.send({error:"User is not the author of this file."});
 	});
 })
 
@@ -458,9 +484,14 @@ app.post('fileaddgroupwriteaccess', function(req, res){
     res.send({ error:'you are not currently logged in.' })
     return
   }
-	queuehandler.file.addgroupwriteaccess(req.body.filename,req.body.newgroup,function(err, response)
-	{
-	res.send({ response: response });
+	queuehandler.user.checkifauthor(req.user,req.body.filename, function(err1,response1) {
+		if(response1 == true)
+			queuehandler.file.addgroupwriteaccess(req.body.filename,req.body.newgroup,function(err2, response2)
+			{
+			res.send({ response: response2 });
+			});
+		else
+			res.send({error:"User is not the author of this file."});
 	});
 })
 
@@ -469,9 +500,14 @@ app.post('fileremgroupwriteaccess', function(req, res){
     res.send({ error:'you are not currently logged in.' })
     return
   }
-	queuehandler.file.remgroupwriteaccess(req.body.filename,req.body.newgroup,function(err, response)
-	{
-	res.send({ response: response });
+	queuehandler.user.checkifauthor(req.user,req.body.filename, function(err1,response1) {
+		if(response1 == true)
+			queuehandler.file.remgroupwriteaccess(req.body.filename,req.body.newgroup,function(err2, response2)
+			{
+			res.send({ response: response2 });
+			});
+		else
+			res.send({error:"User is not the author of this file."});
 	});
 })
 
@@ -596,9 +632,12 @@ app.post( '/update', function( req, res, next ) {
     res.send({ error:'you are not currently logged in.' })
     return
   }
-  
-queuehandler.file.edit(req.body._id,req.body.text)
-
+  queuehandler.user.checkifauthor(req.user,req.body.filename, function(err1,response1) {
+		if(response1 == true)
+			queuehandler.file.edit(req.body._id,req.body.text, function(err2,response2) { });
+		else
+			res.send({error:"User is not the author of this file."});
+	});
 })
 
 app.post( '/createNewUser', function( req, res, next ) { 

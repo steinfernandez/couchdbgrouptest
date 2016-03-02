@@ -129,9 +129,12 @@ function User_CheckIfAuthor(username,filename,cb)
 	if (!err1)
 	{	
 		newfile = body;
-		//console.log(newfile);
+		console.log(newfile);
 		if(newfile.author == username)
+		{
 			verified = true;
+			console.log("authorship verified");
+		}
 	}
 	cb(err1,verified);
 	});
@@ -533,7 +536,36 @@ function Group_Create(groupname,owner,cb)
 	blah.insert({"owner": owner,"type": "group","members": [owner]}, "gibbertest/groups/"+groupname, function(err, body) {
 	var result = false;
 	if (!err)
+	{
+		var newbody = {"type": "user","password": "","grouplist":[],"joinDate": "","website": "","affiliation": "","email": "","following": [],"friends": []}
+		blah.get(owner, { revs_info: true }, function(err3, body3) {
+		if (!err3)
+		{	
+			newbody = body3;
+			console.log(newbody);
+			newbody.grouplist.push(groupname);
+			blah.insert(newbody, owner, function(err4, body4) {
+			if (!err4)
+			{
+				console.log("successfully edited user grouplist");
+				result = true;
+				cb(err4,result);
+			}
+			else
+			{
+				cb(err4,result);
+				console.log(err4);
+			}
+			});
+		}
+		else
+		{
+			cb(err3,result);
+			console.log(err3);
+		}
+		});	
 		result = true;
+	}
 	cb(err,result);
 	});
 }
