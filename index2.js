@@ -388,7 +388,7 @@ app.post('fileaddreadaccess', function(req, res){
     res.send({ error:'you are not currently logged in.' })
     return
   }
-	queuehandler.user.checkifauthor(req.user,req.body.filename, function(err1, response1) {
+	queuehandler.user.checkifauthor(req.user.username,req.body.filename, function(err1, response1) {
 		if(response1 == true)
 			queuehandler.file.addreadaccess(req.body.filename,req.body.newuser,function(err2, response2)
 			{
@@ -404,7 +404,7 @@ app.post('fileremreadaccess', function(req, res){
     res.send({ error:'you are not currently logged in.' })
     return
   }
-	queuehandler.user.checkifauthor(req.user,req.body.filename, function(err1,response1) {
+	queuehandler.user.checkifauthor(req.user.username,req.body.filename, function(err1,response1) {
 		if(response1 == true)
 			queuehandler.file.remreadaccess(req.body.filename,req.body.newuser,function(err2, response2)
 			{
@@ -420,7 +420,7 @@ app.post('fileaddwriteaccess', function(req, res){
     res.send({ error:'you are not currently logged in.' })
     return
   }
-	queuehandler.user.checkifauthor(req.user,req.body.filename, function(err1,response1) {
+	queuehandler.user.checkifauthor(req.user.username,req.body.filename, function(err1,response1) {
 		if(response1 == true)
 			queuehandler.file.addwriteaccess(req.body.filename,req.body.newuser,function(err2, response2)
 			{
@@ -436,7 +436,7 @@ app.post('fileremwriteaccess', function(req, res){
     res.send({ error:'you are not currently logged in.' })
     return
   }
-	queuehandler.user.checkifauthor(req.user,req.body.filename, function(err1,response1) {
+	queuehandler.user.checkifauthor(req.user.username,req.body.filename, function(err1,response1) {
 		if(response1 == true)
 			queuehandler.file.remwriteaccess(req.body.filename,req.body.newuser,function(err2, response2)
 			{
@@ -452,7 +452,7 @@ app.post('fileaddgroupreadaccess', function(req, res){
     res.send({ error:'you are not currently logged in.' })
     return
   }
-	queuehandler.user.checkifauthor(req.user,req.body.filename, function(err1,response1) {
+	queuehandler.user.checkifauthor(req.user.username,req.body.filename, function(err1,response1) {
 		if(response1 == true)
 			queuehandler.file.addgroupreadaccess(req.body.filename,req.body.newgroup,function(err2, response2)
 			{
@@ -468,7 +468,7 @@ app.post('fileremgroupreadaccess', function(req, res){
     res.send({ error:'you are not currently logged in.' })
     return
   }
-	queuehandler.user.checkifauthor(req.user,req.body.filename, function(err1,response1) {
+	queuehandler.user.checkifauthor(req.user.username,req.body.filename, function(err1,response1) {
 		if(response1 == true)
 			queuehandler.file.remgroupreadaccess(req.body.filename,req.body.newgroup,function(err2, response2)
 			{
@@ -484,7 +484,7 @@ app.post('fileaddgroupwriteaccess', function(req, res){
     res.send({ error:'you are not currently logged in.' })
     return
   }
-	queuehandler.user.checkifauthor(req.user,req.body.filename, function(err1,response1) {
+	queuehandler.user.checkifauthor(req.user.username,req.body.filename, function(err1,response1) {
 		if(response1 == true)
 			queuehandler.file.addgroupwriteaccess(req.body.filename,req.body.newgroup,function(err2, response2)
 			{
@@ -500,7 +500,7 @@ app.post('fileremgroupwriteaccess', function(req, res){
     res.send({ error:'you are not currently logged in.' })
     return
   }
-	queuehandler.user.checkifauthor(req.user,req.body.filename, function(err1,response1) {
+	queuehandler.user.checkifauthor(req.user.username,req.body.filename, function(err1,response1) {
 		if(response1 == true)
 			queuehandler.file.remgroupwriteaccess(req.body.filename,req.body.newgroup,function(err2, response2)
 			{
@@ -614,31 +614,98 @@ app.post( '/publish', function( req, res, next ) {
       year = date.getFullYear(),
       time = date.toLocaleTimeString()
 	
-	queuehandler.file.publish(req.body.username,req.body.filename,req.body.code,[year,month,day,time],req.body.language,req.body.tags,req.body.notes,
+	queuehandler.file.publish(req.user.username,req.body.filename,req.body.code,[year,month,day,time],req.body.language,req.body.tags,req.body.notes,
 	function(err,response)
 	{
 		if(err)
 			res.send({error:"unable to publish file."}); //TODO: detailed error messages
 		else
-			{} //TODO: respond properly when file successfully published
+			{} //TODO: respond properly when file successfully published -- with the contents of the published file?
 	}
 	);
 })
 
-//review this fn.
-app.post( '/update', function( req, res, next ) {
+app.post( '/updatecode', function( req, res, next ) {
   //console.log( req.body._rev, req.body._id )
   if( typeof req.user === 'undefined' ) {
     res.send({ error:'you are not currently logged in.' })
     return
   }
-  queuehandler.user.checkifauthor(req.user,req.body.filename, function(err1,response1) {
+  queuehandler.user.checkifauthor(req.user.username,req.body.filename, function(err1,response1) {
 		if(response1 == true)
-			queuehandler.file.edit(req.body._id,req.body.text, function(err2,response2) { });
+			queuehandler.file.edit(req.body.filename,req.body.text, function(err2,response2) {
+			if(!err2)
+				res.send({result: "successfully edited file"});			
+			});
 		else
-			res.send({error:"User is not the author of this file."});
+		{
+			queuehandler.user.authorizewrite(req.user.username,req.body.filename, function(err3, response3) {
+			if(response3 == true)
+			{
+				queuehandler.file.edit(req.body.filename,req.body.text, function(err4,response4) {
+				if(!err4)
+					res.send({result: "successfully edited file"});	
+				});
+			}
+			else
+				res.send({error: "This user is not authorized to modify this file."});
+			});
+		}
 	});
 })
+
+app.post( '/updatemetadata', function( req, res, next ) {
+  //console.log( req.body._rev, req.body._id )
+  if( typeof req.user === 'undefined' ) {
+    res.send({ error:'you are not currently logged in.' })
+    return
+  }
+  queuehandler.user.checkifauthor(req.user.username,req.body.filename, function(err1,response1) {
+		if(response1 == true)
+			queuehandler.file.setmetadata(req.body.filename,req.body.newlanguage,req.body.newtags,req.body.newnotes, function(err2,response2) {
+			if(!err2)
+				res.send({result: "successfully edited file metadata"});			
+			});
+		else
+		{
+			queuehandler.user.authorizewrite(req.user.username,req.body.filename, function(err3, response3) {
+			if(response3 == true)
+			{
+				queuehandler.file.setmetadata(req.body.filename,req.body.newlanguage,req.body.newtags,req.body.newnotes, function(err4,response4) {
+				if(!err4)
+					res.send({result: "successfully edited file"});	
+				});
+			}
+			else
+				res.send({error: "This user is not authorized to modify this file."});
+			});
+		}
+	});
+})
+
+app.post( '/creategroup', function( req, res, next ) {
+  //console.log( req.body._rev, req.body._id )
+  if( typeof req.user === 'undefined' ) {
+    res.send({ error:'you are not currently logged in.' })
+    return
+  }
+	queuehandler.group.create(req.body.groupname,req.user.username,function(err1,response1) {
+	if(!err1)
+		res.send({result: "Successfully created group."});
+	else
+		res.send({result: "Failed to create group."});
+	});
+})
+
+app.post( '/deletegroup', function( req, res, next ) {
+  //console.log( req.body._rev, req.body._id )
+  if( typeof req.user === 'undefined' ) {
+    res.send({ error:'you are not currently logged in.' })
+    return
+  }
+	
+})
+
 
 app.post( '/createNewUser', function( req, res, next ) { 
   var date = new Date(),
